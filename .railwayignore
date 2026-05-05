@@ -1,0 +1,14 @@
+target/
+*.jar
+*.war
+.git
+.gitignore
+README.md
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.env
+.env.local
+node_modules/

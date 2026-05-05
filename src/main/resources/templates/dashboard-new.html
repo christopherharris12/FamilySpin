@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ebenezer Family - Friend of the Week Spin</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f5efe6;
+            --panel: rgba(255, 255, 255, 0.82);
+            --panel-border: rgba(31, 41, 55, 0.08);
+            --text: #1f2937;
+            --muted: #6b7280;
+            --accent: #c2410c;
+            --accent-2: #0f766e;
+            --shadow: 0 20px 45px rgba(120, 53, 15, 0.16);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(194, 65, 12, 0.18), transparent 30%),
+                radial-gradient(circle at top right, rgba(15, 118, 110, 0.16), transparent 28%),
+                linear-gradient(160deg, #fffaf4 0%, var(--bg) 100%);
+            min-height: 100vh;
+        }
+
+        .shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 48px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-content h1 { margin: 0; color: var(--accent); font-size: 32px; }
+        .header-content p { margin: 8px 0 0 0; color: var(--muted); font-size: 14px; }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .user-info {
+            text-align: right;
+            padding-right: 12px;
+            border-right: 1px solid var(--panel-border);
+        }
+
+        .user-info p { margin: 0; color: var(--text); font-weight: 500; }
+        .user-info small { color: var(--muted); }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover { background: #dc2626; }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .marquee-slogan {
+            display: inline-block;
+            animation: marquee 8s linear infinite;
+            white-space: nowrap;
+        }
+
+        .spin-wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        canvas {
+            filter: drop-shadow(0 10px 30px rgba(120, 53, 15, 0.15));
+            cursor: pointer;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: Georgia, serif;
+        }
+
+        .spin-btn {
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            color: white;
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(194, 65, 12, 0.3);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .new-week-btn {
+            background: linear-gradient(135deg, var(--accent-2), #0d9488);
+            color: white;
+        }
+
+        .new-week-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(15, 118, 110, 0.3);
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+            color: white;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .info-card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .friend-display {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .friend-display h2 {
+            margin: 0 0 8px 0;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .friend-display .name {
+            font-size: 36px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .message {
+            background: var(--panel);
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            border-radius: 8px;
+            color: var(--text);
+            margin-bottom: 24px;
+        }
+
+        .active-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .member-chip {
+            background: linear-gradient(135deg, #a1f3e1, #6ee7d8);
+            color: #065f46;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .history-item {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: none;
+            margin-left: 8px;
+        }
+
+        .spin-btn.loading .spinner { display: inline-block; }
+        .spin-btn.loading { opacity: 0.8; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            canvas { max-width: 100%; height: auto; }
+            .controls { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <header>
+            <div class="header-content">
+                <h1>🎡 Ebenezer Family</h1>
+                <p>Friend of the Week Spin - Session [[${state.sessionNumber}]]</p>
+                <p style="font-size: 12px; color: var(--accent); font-weight: 600; margin-top: 8px; letter-spacing: 0.5px; overflow: hidden; width: 100%; height: 18px; line-height: 18px;"><span class="marquee-slogan">💝 Love be Forward 💝</span></p>
+            </div>
+            <div class="header-actions">
+                <div class="user-info" th:if="${username}">
+                    <p th:text="${username}"></p>
+                    <small>Member Account</small>
+                </div>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <div class="friend-display" th:if="${friendOfTheWeekDisplay}">
+            <h2>Your Friend of the Week</h2>
+            <div class="name" th:text="${friendOfTheWeekDisplay}"></div>
+        </div>
+
+        <div class="message" th:if="${dashboardMessage}">
+            <strong>Status:</strong> <span th:text="${dashboardMessage}"></span>
+        </div>
+
+        <div class="spin-wheel-container">
+            <canvas id="spinWheel" width="400" height="400" style="cursor: pointer;"></canvas>
+            
+            <div class="spin-status-message" th:if="${userHasSpun}" style="background: linear-gradient(135deg, #c2410c10, #0f766e10); border-left: 4px solid #0f766e; padding: 16px; border-radius: 8px; color: var(--accent-2); margin-bottom: 20px; text-align: center; font-weight: 500;">
+                ✓ You've already spun this session! Wait for others to take their turns.
+            </div>
+
+            <div class="controls">
+                <button class="spin-btn" id="spinBtn" onclick="spinNext()" th:disabled="${sessionCompleted || userHasSpun}">
+                    🎯 Spin Next
+                    <span class="spinner"></span>
+                </button>
+                <button class="new-week-btn" onclick="startNewWeek()" th:disabled="${!sessionCompleted}">↻ Start New Week</button>
+                <button class="admin-btn" onclick="window.location.href='/admin'">👨‍💼 Admin Dashboard</button>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h3>Active Members ([[${activeMembers.size()}]])</h3>
+            <div class="active-members">
+                <div class="member-chip" th:each="member : ${activeMembers}" th:text="${member}"></div>
+            </div>
+        </div>
+
+        <div class="info-card" th:if="${!history.isEmpty()}">
+            <h3>Elimination History</h3>
+            <ul class="history-list">
+                <li class="history-item" th:each="entry : ${history}">
+                    <div>
+                        <strong th:text="${entry.memberName()}"></strong>
+                        <span style="color: var(--muted); font-size: 12px;"> - Session [[${entry.sessionNumber()}]], Spin #[[${entry.spinNumber()}]]</span>
+                    </div>
+                    <span style="color: var(--muted); font-size: 12px;">[[${entry.remainingMembers()}]] left</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="info-card" th:if="${state.completed}">
+            <h3>Session Starters ([[${state.playersThisSession.size()}]])</h3>
+            <div class="active-members">
+                <div class="member-chip" th:each="player : ${state.playersThisSession}" th:text="${player}"></div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const canvas = document.getElementById('spinWheel');
+        const ctx = canvas.getContext('2d');
+        const members = /*[[${activeMembers}]]*/ [];
+        const shuffledMembers = [...members];
+
+        for (let i = shuffledMembers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledMembers[i], shuffledMembers[j]] = [shuffledMembers[j], shuffledMembers[i]];
+        }
+        
+        let rotation = 0;
+        let isSpinning = false;
+
+        // Helper function to adjust color brightness
+        function adjustBrightness(color, percent) {
+            const num = parseInt(color.replace("#",""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = Math.min(255, (num >> 16) + amt);
+            const G = Math.min(255, (num >> 8 & 0x00FF) + amt);
+            const B = Math.min(255, (num & 0x0000FF) + amt);
+            return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 +
+            (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255))
+            .toString(16).slice(1);
+        }
+
+        function drawRoundedRect(x, y, width, height, radius) {
+            const right = x + width;
+            const bottom = y + height;
+
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(right - radius, y);
+            ctx.quadraticCurveTo(right, y, right, y + radius);
+            ctx.lineTo(right, bottom - radius);
+            ctx.quadraticCurveTo(right, bottom, right - radius, bottom);
+            ctx.lineTo(x + radius, bottom);
+            ctx.quadraticCurveTo(x, bottom, x, bottom - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        function drawWheelLabelBox(text, x, y, angle) {
+            const label = String(text).trim();
+            const maxWidth = 84;
+            const boxHeight = 18;
+            let fontSize = 11;
+            let labelWidth = 0;
+
+            while (fontSize > 7) {
+                ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+                labelWidth = ctx.measureText(label).width;
+                if (labelWidth <= maxWidth) {
+                    break;
+                }
+                fontSize -= 1;
+            }
+
+            const boxWidth = Math.min(maxWidth, Math.max(48, Math.ceil(labelWidth + 14)));
+
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.22)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetY = 1;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+            drawRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 6);
+            ctx.fill();
+
+            ctx.shadowColor = 'transparent';
+            ctx.strokeStyle = 'rgba(194, 65, 12, 0.5)';
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#5c2410';
+            ctx.font = `700 ${fontSize}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, 0, 0.5);
+
+            ctx.restore();
+        }
+
+        let selectedMember = null;
+        const TWO_PI = Math.PI * 2;
+        function drawWheelWithHighlight() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Enhanced color palette with better contrast
+            const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#FFD93D', '#6BCB77', '#9D84B7', '#FF6B9D', '#C06C84', '#6A994E', '#BC4749', '#F2CC8F', '#81B29A', '#E63946', '#457B9D'];
+            const sliceAngle = (Math.PI * 2) / shuffledMembers.length;
+            const radius = Math.min(canvas.width, canvas.height) / 2 - 15;
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(rotation);
+
+            for (let i = 0; i < shuffledMembers.length; i++) {
+                const startAngle = i * sliceAngle;
+                const endAngle = (i + 1) * sliceAngle;
+                const color = colors[i % colors.length];
+
+                // Draw slice with gradient for depth
+                const gradient = ctx.createLinearGradient(0, 0, radius * Math.cos(startAngle + sliceAngle/2), radius * Math.sin(startAngle + sliceAngle/2));
+                gradient.addColorStop(0, color);
+                gradient.addColorStop(1, adjustBrightness(color, -15));
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fill();
+
+                // Highlight the selected member slice
+                if (selectedMember && shuffledMembers[i] === selectedMember) {
+                    ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
+                    ctx.shadowBlur = 30;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                    ctx.fillStyle = adjustBrightness(color, 40);
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.arc(0, 0, radius, startAngle, endAngle);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.shadowColor = 'transparent';
+                }
+
+                // Draw dark border for clear separation
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                // Draw a compact label box on each slice so names stay readable and tidy
+                const textAngle = startAngle + sliceAngle / 2;
+                const textRadius = radius * 0.62;
+                const labelX = Math.cos(textAngle) * textRadius;
+                const labelY = Math.sin(textAngle) * textRadius;
+                drawWheelLabelBox(shuffledMembers[i], labelX, labelY, textAngle);
+            }
+
+            ctx.restore();
+
+            // Draw center circle
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#c2410c';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Draw pointer at top
+            ctx.fillStyle = '#c2410c';
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 20);
+            ctx.lineTo(canvas.width / 2 - 15, 50);
+            ctx.lineTo(canvas.width / 2 + 15, 50);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function spinNext() {
+            if (isSpinning || document.getElementById('spinBtn').disabled) return;
+
+            isSpinning = true;
+            document.getElementById('spinBtn').classList.add('loading');
+
+            const spins = Math.random() * 10 + 20;
+            const startRotation = rotation;
+            const targetRotation = rotation + (Math.PI * 2) * spins;
+            let currentSpin = 0;
+            const duration = 3;
+            const startTime = Date.now();
+
+            function animateSpin() {
+                const elapsed = (Date.now() - startTime) / 1000;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                rotation = startRotation + (targetRotation - startRotation) * easeOut;
+                drawWheelWithHighlight();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    isSpinning = false;
+                    document.getElementById('spinBtn').classList.remove('loading');
+                    submitSpin();
+                }
+            }
+
+            animateSpin();
+        }
+
+        async function submitSpin() {
+            try {
+                const response = await fetch('/api/spin/next', { method: 'POST' });
+                if (response.ok) {
+                    const result = await response.json();
+                    // Set selected member so it's highlighted during the final alignment
+                    selectedMember = result.eliminatedMember;
+
+                    // Find the index of the eliminated member in the shuffled array
+                    const sliceAngle = TWO_PI / shuffledMembers.length;
+                    const targetIndex = shuffledMembers.findIndex(m => String(m).trim() === String(result.eliminatedMember).trim());
+
+                    if (targetIndex >= 0) {
+                        // Compute desired rotation so that slice center aligns to the top pointer
+                        const sliceCenter = targetIndex * sliceAngle + sliceAngle / 2;
+                        // Desired rotation to move the slice center to the top (which is -PI/2),
+                        // so rotation + sliceCenter should equal -PI/2 (mod 2PI)
+                        let desiredRotation = -Math.PI/2 - sliceCenter;
+
+                        // Normalize desiredRotation to be greater than current rotation so it spins forward
+                        while (desiredRotation <= rotation) {
+                            desiredRotation += TWO_PI;
+                        }
+
+                        // Add a couple extra full spins for a satisfying finish
+                        desiredRotation += TWO_PI * 2;
+
+                        // Animate rotation from current to desiredRotation (1.5s ease-out)
+                        const finishStart = Date.now();
+                        const finishDuration = 1500;
+
+                        function finishAnimate() {
+                            const t = Math.min((Date.now() - finishStart) / finishDuration, 1);
+                            const ease = 1 - Math.pow(1 - t, 3);
+                            rotation = rotation + (desiredRotation - rotation) * ease;
+                            drawWheelWithHighlight();
+                            if (t < 1) {
+                                requestAnimationFrame(finishAnimate);
+                            } else {
+                                // Show the selected member name prominently
+                                const banner = document.createElement('div');
+                                banner.innerHTML = `
+                                    <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                              background: linear-gradient(135deg, #FFD700, #FFA500); 
+                                              padding: 40px 60px; border-radius: 20px; 
+                                              font-size: 28px; font-weight: bold; color: white;
+                                              text-align: center; box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4);
+                                              z-index: 1000; animation: pulse 0.6s ease-out;">
+                                        ✨ Friend of the Week ✨<br><span style="font-size: 36px; margin-top: 10px;">${result.eliminatedMember}</span>
+                                    </div>
+                                    <style>
+                                        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+                                    </style>
+                                `;
+                                document.body.appendChild(banner);
+                                setTimeout(() => location.reload(), 2000);
+                            }
+                        }
+
+                        finishAnimate();
+                    } else {
+                        // Fallback: if name not found, just show banner
+                        drawWheelWithHighlight();
+                        const banner = document.createElement('div');
+                        banner.innerHTML = `
+                            <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                                      background: linear-gradient(135deg, #FFD700, #FFA500); 
+                                      padding: 40px 60px; border-radius: 20px; 
+                                      font-size: 28px; font-weight: bold; color: white;
+                                      text-align: center; box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4);
+                                      z-index: 1000; animation: pulse 0.6s ease-out;">
+                                ✨ Friend of the Week ✨<br><span style="font-size: 36px; margin-top: 10px;">${result.eliminatedMember}</span>
+                            </div>
+                            <style>
+                                @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+                            </style>
+                        `;
+                        document.body.appendChild(banner);
+                        setTimeout(() => location.reload(), 2000);
+                    }
+                } else if (response.status === 409) {
+                    const errorText = await response.text();
+                    if (errorText.includes("already spun")) {
+                        alert('You have already spun this session! Wait for others to take their turns.');
+                    } else {
+                        alert('Session is complete! Start a new week to continue.');
+                    }
+                } else {
+                    alert('Error during spin');
+                }
+            } catch (error) {
+                alert('Failed to spin: ' + error.message);
+            }
+        }
+
+        async function startNewWeek() {
+            if (confirm('Start a new week session?')) {
+                try {
+                    const response = await fetch('/api/spin/new-week', { method: 'POST' });
+                    if (response.ok) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    alert('Failed to start new week');
+                }
+            }
+        }
+
+        drawWheelWithHighlight();
+    </script>
+</body>
+</html>

@@ -39,6 +39,7 @@ public class DashboardController {
         
         model.addAttribute("state", state);
         model.addAttribute("username", user.getUsername());
+        model.addAttribute("userIsAdmin", user.isAdmin());
         model.addAttribute("userHasSpun", userHasSpun);
         model.addAttribute("friendOfTheWeek", state.friendOfTheWeek());
         // Only show the friend display to users who have already spun this session.

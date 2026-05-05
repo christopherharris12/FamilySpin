@@ -68,7 +68,18 @@ public class SpinController {
     }
 
     @PostMapping("/new-week")
-    public SpinState newWeek() {
+    public SpinState newWeek(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please log in first.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please log in first."));
+        if (!user.isAdmin()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can start a new week.");
+        }
+
         spinService.startNewWeek();
         return spinService.getState();
     }

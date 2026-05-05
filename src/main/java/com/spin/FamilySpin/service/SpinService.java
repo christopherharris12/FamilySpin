@@ -1,10 +1,10 @@
 package com.spin.FamilySpin.service;
 
+import com.spin.FamilySpin.model.GamePlay;
 import com.spin.FamilySpin.model.SpinHistoryEntry;
 import com.spin.FamilySpin.model.SpinOutcome;
 import com.spin.FamilySpin.model.SpinSession;
 import com.spin.FamilySpin.model.SpinState;
-import com.spin.FamilySpin.model.GamePlay;
 import com.spin.FamilySpin.model.User;
 import com.spin.FamilySpin.repository.GamePlayRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SpinService {
 
     private final List<String> originalMembers;
+    private final List<String> rosterMembers;
     private final List<String> activeMembers;
     private final List<SpinHistoryEntry> history;
     private final java.util.Deque<String> recentLogins;
@@ -34,7 +35,8 @@ public class SpinService {
 
     public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository) {
         this.originalMembers = parseMembers(seedMembers);
-        this.activeMembers = new ArrayList<>(originalMembers);
+        this.rosterMembers = new ArrayList<>(originalMembers);
+        this.activeMembers = new ArrayList<>(rosterMembers);
         this.history = new ArrayList<>();
         this.recentLogins = new java.util.ArrayDeque<>();
         this.usersSpunThisSession = new HashSet<>();
@@ -45,10 +47,11 @@ public class SpinService {
     }
 
     public synchronized void recordLogin(User user) {
-        if (user == null) return;
+        if (user == null) {
+            return;
+        }
         String entry = Instant.now().toString() + " - " + user.getUsername();
         recentLogins.addFirst(entry);
-        // Keep only the most recent 50 entries
         while (recentLogins.size() > 50) {
             recentLogins.removeLast();
         }
@@ -59,7 +62,6 @@ public class SpinService {
     }
 
     public synchronized SpinOutcome spinNext(User currentUser) {
-        // Check if user has already spun this session
         if (currentUser != null && usersSpunThisSession.contains(currentUser.getId())) {
             throw new IllegalStateException("You have already spun this session. Please wait for others to spin.");
         }
@@ -68,7 +70,6 @@ public class SpinService {
             throw new IllegalStateException("No active members left to spin.");
         }
 
-        // Create a temporary list for selection that excludes the current spinner
         List<String> selectableMembers = new ArrayList<>(activeMembers);
         if (currentUser != null && currentUser.getFamilyMemberName() != null) {
             selectableMembers.remove(currentUser.getFamilyMemberName());
@@ -78,17 +79,14 @@ public class SpinService {
             throw new IllegalStateException("No other members available to select.");
         }
 
-        // Select someone from the non-spinner members
         int selectedIndex = ThreadLocalRandom.current().nextInt(selectableMembers.size());
         String eliminatedMember = selectableMembers.get(selectedIndex);
-        
-        // Remove only the selected member from active members
+
         activeMembers.remove(eliminatedMember);
-        
+
         int spinNumber = history.size() + 1;
         history.add(new SpinHistoryEntry(sessionNumber, spinNumber, eliminatedMember, Instant.now(), activeMembers.size()));
 
-        // Record the game play and track this user
         if (currentUser != null) {
             GamePlay gamePlay = new GamePlay(currentUser, sessionNumber, eliminatedMember);
             gamePlayRepository.save(gamePlay);
@@ -106,20 +104,19 @@ public class SpinService {
 
     public synchronized SpinState getState() {
         String friendOfTheWeek = getFriendOfTheWeek();
-        return new SpinState(sessionNumber, sessionStartedAt, sessionCompletedAt, activeMembers.isEmpty(), friendOfTheWeek, buildDashboardMessage(friendOfTheWeek, activeMembers.isEmpty()), List.copyOf(activeMembers), List.copyOf(history), getPlayersThisSession(), originalMembers.size());
+        return new SpinState(sessionNumber, sessionStartedAt, sessionCompletedAt, activeMembers.isEmpty(), friendOfTheWeek, buildDashboardMessage(friendOfTheWeek, activeMembers.isEmpty()), List.copyOf(activeMembers), List.copyOf(history), getPlayersThisSession(), rosterMembers.size());
     }
 
     public synchronized boolean hasUserSpunThisSession(User user) {
         if (user == null) {
             return false;
         }
-        // Check database for existing GamePlay record in current session
         return gamePlayRepository.findByUserAndSessionNumber(user, sessionNumber).isPresent();
     }
 
     public synchronized void reset() {
         activeMembers.clear();
-        activeMembers.addAll(originalMembers);
+        activeMembers.addAll(rosterMembers);
         history.clear();
         usersSpunThisSession.clear();
         sessionNumber++;
@@ -154,7 +151,7 @@ public class SpinService {
 
     public synchronized SpinSession getSession() {
         String friendOfTheWeek = getFriendOfTheWeek();
-        return new SpinSession(sessionNumber, sessionStartedAt, sessionCompletedAt, activeMembers.isEmpty(), friendOfTheWeek, buildDashboardMessage(friendOfTheWeek, activeMembers.isEmpty()), List.copyOf(activeMembers), List.copyOf(history), getPlayersThisSession(), originalMembers.size());
+        return new SpinSession(sessionNumber, sessionStartedAt, sessionCompletedAt, activeMembers.isEmpty(), friendOfTheWeek, buildDashboardMessage(friendOfTheWeek, activeMembers.isEmpty()), List.copyOf(activeMembers), List.copyOf(history), getPlayersThisSession(), rosterMembers.size());
     }
 
     private String getFriendOfTheWeek() {
@@ -188,22 +185,29 @@ public class SpinService {
         if (familyMemberName == null || familyMemberName.isBlank()) {
             return false;
         }
+
         String trimmedName = familyMemberName.trim();
-        if (activeMembers.contains(trimmedName)) {
-            return false; // already exists
+        if (rosterMembers.contains(trimmedName)) {
+            return false;
         }
+
+        rosterMembers.add(trimmedName);
         activeMembers.add(trimmedName);
         return true;
     }
 
     public synchronized List<String> getAllMembers() {
-        return List.copyOf(activeMembers);
+        return List.copyOf(rosterMembers);
     }
 
     public synchronized boolean removeMember(String familyMemberName) {
         if (familyMemberName == null || familyMemberName.isBlank()) {
             return false;
         }
-        return activeMembers.remove(familyMemberName.trim());
+
+        String trimmedName = familyMemberName.trim();
+        boolean removedFromRoster = rosterMembers.remove(trimmedName);
+        boolean removedFromActive = activeMembers.remove(trimmedName);
+        return removedFromRoster || removedFromActive;
     }
 }

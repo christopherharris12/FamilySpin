@@ -11,6 +11,7 @@ public record SpinOutcome(
         List<SpinHistoryEntry> history,
         List<String> playersThisSession,
         boolean sessionCompleted,
-        String dashboardMessage
+        String dashboardMessage,
+        boolean retryRequired
 ) {
 }

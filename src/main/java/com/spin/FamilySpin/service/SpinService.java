@@ -82,6 +82,24 @@ public class SpinService {
         int selectedIndex = ThreadLocalRandom.current().nextInt(selectableMembers.size());
         String eliminatedMember = selectableMembers.get(selectedIndex);
 
+        // Safety guard: if a user lands on their own family member name,
+        // do not consume their turn or remove anyone; ask them to spin again.
+        if (currentUser != null && isSameMemberName(eliminatedMember, currentUser.getFamilyMemberName())) {
+            String retryMessage = "You teased yourself. Spin again.";
+            return new SpinOutcome(
+                sessionNumber,
+                history.size(),
+                null,
+                getFriendOfTheWeek(),
+                List.copyOf(activeMembers),
+                List.copyOf(history),
+                getPlayersThisSession(),
+                activeMembers.isEmpty(),
+                retryMessage,
+                true
+            );
+        }
+
         activeMembers.remove(eliminatedMember);
 
         int spinNumber = history.size() + 1;
@@ -99,7 +117,18 @@ public class SpinService {
         }
 
         String dashboardMessage = buildDashboardMessage(eliminatedMember, sessionCompleted);
-        return new SpinOutcome(sessionNumber, spinNumber, eliminatedMember, eliminatedMember, List.copyOf(activeMembers), List.copyOf(history), getPlayersThisSession(), sessionCompleted, dashboardMessage);
+        return new SpinOutcome(
+            sessionNumber,
+            spinNumber,
+            eliminatedMember,
+            eliminatedMember,
+            List.copyOf(activeMembers),
+            List.copyOf(history),
+            getPlayersThisSession(),
+            sessionCompleted,
+            dashboardMessage,
+            false
+        );
     }
 
     public synchronized SpinState getState() {
@@ -209,5 +238,12 @@ public class SpinService {
         boolean removedFromRoster = rosterMembers.remove(trimmedName);
         boolean removedFromActive = activeMembers.remove(trimmedName);
         return removedFromRoster || removedFromActive;
+    }
+
+    private boolean isSameMemberName(String left, String right) {
+        if (left == null || right == null) {
+            return false;
+        }
+        return left.trim().equalsIgnoreCase(right.trim());
     }
 }

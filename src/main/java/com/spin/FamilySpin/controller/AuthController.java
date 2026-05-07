@@ -8,7 +8,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class AuthController {
@@ -23,7 +29,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("familyMembers", spinService.getAllMembers());
+        model.addAttribute("familyMembers", getAvailableFamilyMembers());
         return "register";
     }
 
@@ -38,11 +44,19 @@ public class AuthController {
 
         if (userRepository.findByUsername(username).isPresent()) {
             model.addAttribute("error", "Username already exists");
+            model.addAttribute("familyMembers", getAvailableFamilyMembers());
             return "register";
         }
 
         if (userRepository.findByEmail(email).isPresent()) {
             model.addAttribute("error", "Email already registered");
+            model.addAttribute("familyMembers", getAvailableFamilyMembers());
+            return "register";
+        }
+
+        if (userRepository.findByFamilyMemberName(familyMemberName).isPresent()) {
+            model.addAttribute("error", "This family member name is already taken. Please choose another.");
+            model.addAttribute("familyMembers", getAvailableFamilyMembers());
             return "register";
         }
 
@@ -50,6 +64,16 @@ public class AuthController {
         userRepository.save(user);
 
         return "redirect:/login";
+    }
+
+    private List<String> getAvailableFamilyMembers() {
+        List<String> available = new ArrayList<>(spinService.getAllMembers());
+        Set<String> takenNames = userRepository.findAll().stream()
+                .map(User::getFamilyMemberName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        available.removeAll(takenNames);
+        return available;
     }
 
     @GetMapping("/login")

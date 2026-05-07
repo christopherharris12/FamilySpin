@@ -286,6 +286,10 @@
             🌟 Every family member gets one spin per session. Make it count!
         </div>
 
+        <div th:if="${#lists.isEmpty(familyMembers)}" class="info-box">
+            ⚠️ All family member names are currently taken. Please ask an admin to add more members.
+        </div>
+
         <div th:if="${error}" class="error" th:text="${error}"></div>
 
         <form method="post">

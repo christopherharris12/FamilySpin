@@ -1,11 +1,13 @@
 package com.spin.FamilySpin.service;
 
+import com.spin.FamilySpin.model.DynamicMember;
 import com.spin.FamilySpin.model.GamePlay;
 import com.spin.FamilySpin.model.SpinHistoryEntry;
 import com.spin.FamilySpin.model.SpinOutcome;
 import com.spin.FamilySpin.model.SpinSession;
 import com.spin.FamilySpin.model.SpinState;
 import com.spin.FamilySpin.model.User;
+import com.spin.FamilySpin.repository.DynamicMemberRepository;
 import com.spin.FamilySpin.repository.GamePlayRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,14 +30,25 @@ public class SpinService {
     private final List<SpinHistoryEntry> history;
     private final java.util.Deque<String> recentLogins;
     private final GamePlayRepository gamePlayRepository;
+    private final DynamicMemberRepository dynamicMemberRepository;
     private final Set<Long> usersSpunThisSession;
     private int sessionNumber;
     private Instant sessionStartedAt;
     private Instant sessionCompletedAt;
 
-    public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository) {
+    public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository, DynamicMemberRepository dynamicMemberRepository) {
         this.originalMembers = parseMembers(seedMembers);
         this.rosterMembers = new ArrayList<>(originalMembers);
+        this.dynamicMemberRepository = dynamicMemberRepository;
+        
+        // Load dynamically added members from database
+        List<DynamicMember> dynamicMembers = dynamicMemberRepository.findAll();
+        for (DynamicMember dm : dynamicMembers) {
+            if (!rosterMembers.contains(dm.getName())) {
+                rosterMembers.add(dm.getName());
+            }
+        }
+        
         this.activeMembers = new ArrayList<>(rosterMembers);
         this.history = new ArrayList<>();
         this.recentLogins = new java.util.ArrayDeque<>();
@@ -222,6 +235,11 @@ public class SpinService {
 
         rosterMembers.add(trimmedName);
         activeMembers.add(trimmedName);
+        
+        // Save to database
+        DynamicMember dynamicMember = new DynamicMember(trimmedName);
+        dynamicMemberRepository.save(dynamicMember);
+        
         return true;
     }
 
@@ -237,6 +255,12 @@ public class SpinService {
         String trimmedName = familyMemberName.trim();
         boolean removedFromRoster = rosterMembers.remove(trimmedName);
         boolean removedFromActive = activeMembers.remove(trimmedName);
+        
+        // Delete from database
+        if (removedFromRoster || removedFromActive) {
+            dynamicMemberRepository.deleteByName(trimmedName);
+        }
+        
         return removedFromRoster || removedFromActive;
     }
 

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${game.name} + ' - Ebenezer Family Games'"></title>
+    <style>
+        :root {
+            --primary: #c2410c;
+            --primary-dark: #9a2d06;
+            --secondary: #0f766e;
+            --accent: #f59e0b;
+            --bg-light: #fef3e2;
+            --bg-dark: #1f2937;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Trebuchet MS, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e2a47 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .timer {
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .timer.warning {
+            background: var(--warning);
+            color: #78350f;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .back-btn {
+            background: var(--text-light);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: var(--text);
+            transform: translateY(-2px);
+        }
+
+        .game-board {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .lock-overlay {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .lock-overlay h2 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .lock-overlay p {
+            color: var(--text-light);
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* TRIVIA GAME */
+        .trivia-question {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .trivia-bible {
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.1);
+        }
+
+        /* DARE GAME */
+        .dare-challenge {
+            background: linear-gradient(135deg, #fecaca, #fca5a5);
+            padding: 40px 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dare-challenge h3 {
+            font-size: 18px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .dare-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--error);
+            margin-bottom: 20px;
+        }
+
+        .dare-bible {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #7a2e0a;
+            font-weight: 500;
+        }
+
+        .dare-kwisi {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        /* BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(194, 65, 12, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0d7c72;
+            transform: translateY(-2px);
+        }
+
+        .btn-disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* MEMORY MATCH */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.matched {
+            background: var(--success);
+            cursor: default;
+        }
+
+        /* WORD ASSOCIATION */
+        .word-chain {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .word-chip {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* 20 QUESTIONS */
+        .question-clue {
+            background: linear-gradient(135deg, #bfdbfe, #93c5fd);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .question-clue h3 {
+            font-size: 16px;
+            color: #1e3a8a;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 24px;
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .marquee-slogan {
+            display: inline-block;
+            animation: marquee 8s linear infinite;
+            white-space: nowrap;
+        }
+
+        .slogan {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-weight: 600;
+            overflow: hidden;
+            height: 18px;
+            line-height: 18px;
+        }
+
+        .status-message {
+            background: var(--bg-light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .status-message.success {
+            background: #d1fae5;
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                padding: 20px;
+            }
+
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .timer {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="slogan">
+            <span class="marquee-slogan">💝 Kwisi! | Love be Forward | 💝 Kwisi na Jambo! 💝</span>
+        </div>
+
+        <header>
+            <div>
+                <h1 th:text="${game.name}"></h1>
+                <p th:text="'Week ' + ${weekNumber} + ' - ' + ${game.gameType}"></p>
+            </div>
+            <div class="header-right">
+                <div class="timer" id="timer">15:00</div>
+                <button class="back-btn" onclick="window.location.href='/games'">← Back</button>
+            </div>
+        </header>
+
+        <div class="game-board">
+            <!-- LOCKED STATE -->
+            <div th:if="${!playable}" class="lock-overlay">
+                <div style="font-size: 60px; margin-bottom: 20px;">🔒</div>
+                <h2>This game is locked</h2>
+                <p>This game unlocks at midnight. Check back then to play!</p>
+                <p style="color: var(--primary); font-weight: 600; font-size: 18px;" th:text="'Today\'s game: Check /games for today\'s unlocked game'"></p>
+            </div>
+
+            <!-- TRIVIA GAME -->
+            <div th:if="${playable && game.gameType == 'TRIVIA'}">
+                <div th:if="${question}" style="text-align: center;">
+                    <div class="trivia-question" th:text="${question.question}"></div>
+                    <div class="trivia-bible" th:if="${question.bibleVerse}">
+                        📖 Bible Verse: [[${question.bibleVerse}]]
+                    </div>
+                    <input type="text" class="answer-input" id="triviaAnswer" placeholder="Type your answer..." />
+                    <div class="btn-group">
+                        <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
+                        <button class="btn-secondary" onclick="skipQuestion()">Skip</button>
+                    </div>
+                </div>
+                <div th:if="!${question}" class="status-message error">
+                    No questions available for today. Check back later!
+                </div>
+            </div>
+
+            <!-- DARE GAME -->
+            <div th:if="${playable && game.gameType == 'DARE'}">
+                <div th:if="${challenge}" style="text-align: center;">
+                    <h3>Your Challenge</h3>
+                    <div class="dare-challenge">
+                        <h3>🎯 KWISI - Here's Your Dare!</h3>
+                        <div class="dare-text" th:text="${challenge.challenge}"></div>
+                        <div class="dare-bible" th:if="${challenge.bibleVerse}">
+                            📖 [[${challenge.bibleVerse}]]
+                        </div>
+                        <div class="dare-kwisi" th:text="${challenge.kwisiPhrase} ?: '🎉'"></div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-primary" onclick="completeDare()">✓ Completed!</button>
+                        <button class="btn-secondary" onclick="skipDare()">Skip This One</button>
+                    </div>
+                </div>
+                <div th:if="!${challenge}" class="status-message error">
+                    No dares available. Check back later!
+                </div>
+            </div>
+
+            <!-- CHARADES GAME -->
+            <div th:if="${playable && game.gameType == 'CHARADES'}">
+                <div th:if="${challenge}" style="text-align: center;">
+                    <h3>Act Out This Word</h3>
+                    <div class="dare-challenge" style="background: linear-gradient(135deg, #c7d2fe, #a5b4fc);">
+                        <h3>Ready? Here's Your Word:</h3>
+                        <div class="dare-text" style="color: #1e3a8a; font-size: 32px;" th:text="${challenge.challenge}"></div>
+                        <div style="font-size: 48px; margin: 20px 0;">🎭</div>
+                        <div style="color: #1e40af; font-weight: 500;">Act it out for your family to guess!</div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-primary" onclick="completeCharades()">Guessed Correctly!</button>
+                        <button class="btn-secondary" onclick="skipCharades()">Next Word</button>
+                    </div>
+                </div>
+                <div th:if="!${challenge}" class="status-message error">
+                    No words available. Check back later!
+                </div>
+            </div>
+
+            <!-- WORD ASSOCIATION GAME -->
+            <div th:if="${playable && game.gameType == 'WORD_ASSOCIATION'}">
+                <div th:if="${challenge}">
+                    <h3 style="text-align: center; margin-bottom: 20px;">Starting Word:</h3>
+                    <div class="word-chain">
+                        <div class="word-chip" th:text="${challenge.challenge}"></div>
+                        <div style="font-size: 20px; color: var(--primary); font-weight: 700;">→</div>
+                        <input type="text" class="answer-input" id="nextWord" placeholder="Type a related word..." style="flex: 1; margin: 0;" />
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-primary" onclick="addWord()">Add to Chain</button>
+                        <button class="btn-secondary" onclick="endChain()">End Chain</button>
+                    </div>
+                </div>
+                <div th:if="!${challenge}" class="status-message error">
+                    No starting words available. Check back later!
+                </div>
+            </div>
+
+            <!-- 20 QUESTIONS GAME -->
+            <div th:if="${playable && game.gameType == '20_QUESTIONS'}">
+                <div th:if="${challenge}">
+                    <div class="question-clue">
+                        <h3>🤔 Think of this:</h3>
+                        <div class="question-text" th:text="${challenge.challenge}"></div>
+                    </div>
+                    <h3 style="text-align: center; margin-bottom: 20px;">Family members have 20 yes/no questions to guess what it is!</h3>
+                    <div class="btn-group">
+                        <button class="btn-primary" onclick="guessedCorrect()">Someone Guessed It!</button>
+                        <button class="btn-secondary" onclick="endQuestions()">Reveal the Answer</button>
+                    </div>
+                </div>
+                <div th:if="!${challenge}" class="status-message error">
+                    No items available. Check back later!
+                </div>
+            </div>
+
+            <!-- MEMORY MATCH GAME -->
+            <div th:if="${playable && game.gameType == 'MEMORY'}">
+                <h3 style="text-align: center; margin-bottom: 30px;">Memory Match - Find the Pairs!</h3>
+                <div class="memory-grid" id="memoryGrid">
+                    <!-- Memory cards will be generated here -->
+                </div>
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="resetMemory()">Reset Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Timer countdown
+        let timeLeft = 15 * 60;
+        setInterval(() => {
+            timeLeft--;
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer').innerText = 
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+            
+            if (timeLeft <= 60) {
+                document.getElementById('timer').classList.add('warning');
+            }
+        }, 1000);
+
+        function submitTrivia() {
+            const answer = document.getElementById('triviaAnswer').value;
+            if (answer.trim()) {
+                alert('Trivia answer submitted! Waiting for admin verification...');
+            }
+        }
+
+        function skipQuestion() {
+            location.reload();
+        }
+
+        function completeDare() {
+            alert('Dare completed! 🎉 +10 points earned!');
+        }
+
+        function skipDare() {
+            location.reload();
+        }
+
+        function completeCharades() {
+            alert('Word guessed correctly! +15 points earned!');
+        }
+
+        function skipCharades() {
+            location.reload();
+        }
+
+        function addWord() {
+            const word = document.getElementById('nextWord').value;
+            if (word.trim()) {
+                alert('Word added to chain! ' + word);
+                document.getElementById('nextWord').value = '';
+            }
+        }
+
+        function endChain() {
+            alert('Chain ended! Points calculated based on chain length!');
+        }
+
+        function guessedCorrect() {
+            alert('Correct! +20 points earned!');
+        }
+
+        function endQuestions() {
+            alert('Game ended! Points based on questions used!');
+        }
+
+        function resetMemory() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>

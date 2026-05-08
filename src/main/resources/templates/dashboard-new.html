@@ -285,6 +285,7 @@
                     <span class="spinner"></span>
                 </button>
                 <button class="new-week-btn" th:if="${userIsAdmin}" onclick="startNewWeek()" th:disabled="${!sessionCompleted}">↻ Start New Week</button>
+                <button class="admin-btn" onclick="window.location.href='/games'" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">🎮 Daily Games</button>
                 <button class="admin-btn" onclick="window.location.href='/admin'">👨‍💼 Admin Dashboard</button>
             </div>
         </div>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Family Games - Ebenezer Family</title>
+    <style>
+        :root {
+            --primary: #c2410c;
+            --primary-dark: #9a2d06;
+            --secondary: #0f766e;
+            --accent: #f59e0b;
+            --bg-light: #fef3e2;
+            --bg-dark: #1f2937;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Trebuchet MS, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e2a47 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left h1 {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .header-left p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .user-badge {
+            background: var(--bg-light);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        .admin-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .admin-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-card.locked {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .game-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            z-index: 10;
+        }
+
+        .game-day {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .game-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .game-type {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+        }
+
+        .game-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .game-status.playable {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .game-status.locked {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .game-description {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .game-action {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .game-action:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .game-action.disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .marquee-slogan {
+            display: inline-block;
+            animation: marquee 8s linear infinite;
+            white-space: nowrap;
+        }
+
+        .slogan {
+            text-align: center;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-weight: 600;
+            overflow: hidden;
+            height: 20px;
+            line-height: 20px;
+        }
+
+        .leaderboard-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-section h2 {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th {
+            background: var(--bg-light);
+            color: var(--primary);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .leaderboard-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .leaderboard-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .rank-badge.first {
+            background: #fbbf24;
+            color: #78350f;
+        }
+
+        .rank-badge.second {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .rank-badge.third {
+            background: #fed7aa;
+            color: #92400e;
+        }
+
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .header-right {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>🎡 Family Games Hub</h1>
+                <p>Week [[${weekNumber}]] - Daily Fun & Engagement</p>
+            </div>
+            <div class="header-right">
+                <div class="user-badge" th:if="${username}">
+                    👤 [[${username}]]
+                </div>
+                <button class="admin-btn" onclick="window.location.href='/dashboard'">← Back to Spin</button>
+                <button class="admin-btn" th:if="${userIsAdmin}" onclick="window.location.href='/admin'">⚙️ Admin</button>
+                <a href="/logout" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <div class="slogan">
+            <span class="marquee-slogan">💝 Love be Forward | Kwisi na Jambo! | 💝 Love be Forward 💝</span>
+        </div>
+
+        <div class="games-grid">
+            <div class="game-card" th:each="game : ${games}" th:classappend="${game.id != todayGameId ? 'locked' : ''}">
+                <div class="game-day" th:text="${#strings.capitalize(game.dayOfWeek == 0 ? 'Sunday' : game.dayOfWeek == 1 ? 'Monday' : game.dayOfWeek == 2 ? 'Tuesday' : game.dayOfWeek == 3 ? 'Wednesday' : game.dayOfWeek == 4 ? 'Thursday' : game.dayOfWeek == 5 ? 'Friday' : 'Saturday')}"></div>
+                <div class="game-name" th:text="${game.name}"></div>
+                <div class="game-type" th:text="'Type: ' + ${game.gameType}"></div>
+                
+                <div class="game-status" th:classappend="${game.id == todayGameId ? 'playable' : 'locked'}">
+                    <span th:if="${game.id == todayGameId}">🟢 Today's Game</span>
+                    <span th:if="${game.id != todayGameId}">🔒 Locked</span>
+                </div>
+
+                <div class="game-description">
+                    <span th:if="${game.gameType == 'TRIVIA'}">Answer random trivia questions about family, Bible, and general knowledge!</span>
+                    <span th:if="${game.gameType == 'MEMORY'}">Flip cards and find matching pairs. Test your memory!</span>
+                    <span th:if="${game.gameType == 'DARE'}">Complete fun dares and challenges. Get your points!</span>
+                    <span th:if="${game.gameType == 'CHARADES'}">Act out words for others to guess. Pure fun!</span>
+                    <span th:if="${game.gameType == 'WORD_ASSOCIATION'}">Type related words in a chain. Quick thinking required!</span>
+                    <span th:if="${game.gameType == '20_QUESTIONS'}">Think of something and let others guess with 20 yes/no questions.</span>
+                </div>
+
+                <a th:if="${game.id == todayGameId}" th:href="'/games/' + ${game.id}" class="game-action">
+                    ▶️ Play Now
+                </a>
+                <button th:if="${game.id != todayGameId}" class="game-action disabled">
+                    🔒 Unlocks at Midnight
+                </button>
+            </div>
+        </div>
+
+        <div class="leaderboard-section">
+            <h2>📊 Weekly Leaderboard</h2>
+            <table class="leaderboard-table" th:if="${!leaderboard.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Family Member</th>
+                        <th>Username</th>
+                        <th>Total Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${leaderboard}">
+                        <td>
+                            <div class="rank-badge" th:classappend="${entry.rank == 1 ? 'first' : entry.rank == 2 ? 'second' : entry.rank == 3 ? 'third' : ''}">
+                                [[${entry.rank}]]
+                            </div>
+                        </td>
+                        <td th:text="${entry.familyMemberName}"></td>
+                        <td th:text="${entry.username}"></td>
+                        <td>
+                            <strong th:text="${entry.totalScore} + ' pts'"></strong>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div th:if="${leaderboard.isEmpty()}" style="text-align: center; color: var(--text-light); padding: 40px 20px;">
+                <p>No scores yet. Start playing games to appear on the leaderboard! 🎮</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

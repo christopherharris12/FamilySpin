@@ -32,6 +32,7 @@ public class GameService {
         this.gameQuestionRepository = gameQuestionRepository;
         this.gameChallengeRepository = gameChallengeRepository;
         initializeWeek();
+        initializeCurrentWeekGamesIfMissing();
     }
 
     private void initializeWeek() {
@@ -39,6 +40,12 @@ public class GameService {
         LocalDate weekStart = today.with(DayOfWeek.SUNDAY);
         this.currentWeekNumber = (int) (today.toEpochDay() / 7);
         this.weekStartDate = weekStart.atStartOfDay(ZoneId.systemDefault()).toInstant();
+    }
+
+    private void initializeCurrentWeekGamesIfMissing() {
+        if (gameRepository.findByWeekNumber(currentWeekNumber).isEmpty()) {
+            initializeWeekGames(currentWeekNumber, weekStartDate);
+        }
     }
 
     /**
@@ -55,6 +62,10 @@ public class GameService {
     public synchronized Optional<Game> getTodayGame() {
         int today = getTodayDayOfWeek();
         return gameRepository.findByDayOfWeekAndWeekNumber(today, currentWeekNumber);
+    }
+
+    public synchronized Optional<Game> getGameById(Long gameId) {
+        return gameRepository.findById(gameId);
     }
 
     /**

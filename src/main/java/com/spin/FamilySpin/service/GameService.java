@@ -215,15 +215,15 @@ public class GameService {
     private void generateTriviaQuestions(Game game) {
         String[][] triviaData = {
             {"What does it mean to feel 'at home' in a community?", "A place where you belong and are accepted for who you are", "Community", "Proverbs 27:12 - Home is where we find refuge"},
-            {"What is one value that helps people feel connected in a family?", "Trust, vulnerability, or genuine listening", "Community", "1 John 4:7-8 - We love because we know we are loved"},
-            {"How can we make someone feel welcomed into our community?", "Listen to their story, show genuine interest, include them in activities", "Community", "Hebrews 13:2 - Welcome strangers"},
-            {"What does 'Kwisi' mean in the context of family bonding?", "Joy, vibes, authentic connection and good energy", "Family", "Psalm 16:11 - Joy is in God's presence"},
-            {"What is one challenge university students face when building community?", "Loneliness, fear of rejection, lack of time, cultural differences", "University", "Ecclesiastes 4:9-10 - Two are better than one"},
-            {"How do we handle conflict in a healthy community?", "Open communication, listen to understand, seek reconciliation", "Community", "Matthew 18:15-17 - Address issues with compassion"},
-            {"What is the most important ingredient for building trust?", "Consistency, honesty, and being vulnerable", "Community", "Proverbs 13:3 - Guard your words carefully"},
-            {"What does 'home' represent beyond just a place?", "Belonging, safety, acceptance, and unconditional support", "Community", "John 14:1-3 - 'I go to prepare a place for you'"},
-            {"How can diversity strengthen a community?", "Different perspectives bring innovation, empathy, and richer understanding", "Community", "1 Corinthians 12:12-13 - Many parts, one body"},
-            {"What is one way to show someone they truly matter in your community?", "Remember details about their life, celebrate their wins, show up in hard times", "Community", "1 Thessalonians 5:11 - Encourage one another"}
+            {"What is the biggest challenge university students face today?", "Mental health, loneliness, financial pressure, or academic stress", "Real Life", "Philippians 4:6-7 - Cast your cares on God"},
+            {"How do you handle a conflict with someone you care about?", "Listen, apologize if wrong, seek to understand, find compromise", "Real Life", "Matthew 5:24 - Be reconciled with your brother"},
+            {"What does it mean to have financial responsibility?", "Budgeting, saving, not overspending, understanding your limits", "Real Life", "Proverbs 21:5 - The plans of the diligent lead to profit"},
+            {"What is the most important skill for your career future?", "Communication, problem-solving, adaptability, or continuous learning", "Career", "Proverbs 22:29 - Do you see someone skilled in their work"},
+            {"How do you maintain mental health during stressful times?", "Exercise, sleep, therapy, talking to friends, or spiritual practices", "Real Life", "Philippians 4:8 - Think on these things"},
+            {"What role does failure play in personal growth?", "It teaches resilience, reveals weaknesses, and builds character", "Personal Growth", "Romans 5:3-4 - Suffering produces perseverance"},
+            {"What is true friendship based on?", "Trust, honesty, vulnerability, and mutual support through good and bad", "Relationships", "Proverbs 27:17 - Iron sharpens iron"},
+            {"How do you decide what matters most in your life?", "Values, long-term goals, relationships, and what brings genuine fulfillment", "Real Life", "Colossians 3:15 - Let peace guide your decisions"},
+            {"What is one way social media affects real relationships?", "Can create comparison, surface-level connection, or distance from genuine interaction", "Real Life", "Psalm 26:4 - I do not sit with the deceitful"}
         };
 
         for (String[] data : triviaData) {
@@ -234,12 +234,12 @@ public class GameService {
 
     private void generateDareChallenges(Game game) {
         String[][] dareData = {
-            {"Share a moment when you felt truly accepted by the community", "DARE", "1 Peter 4:10 - Use your gifts to serve each other", "Kwisi na vulnerability!"},
-            {"Tell someone in the group why they matter to you personally", "DARE", "1 Thessalonians 5:11 - Encourage one another", "Kwisi amakuru!"},
-            {"Share a fear you're working to overcome", "DARE", "2 Timothy 1:7 - God has not given us a spirit of fear", "Kwisi with courage!"},
-            {"Give a genuine apology if you've hurt someone in the family", "DARE", "Matthew 5:24 - Be reconciled with your brother", "Kwisi peace!"},
-            {"Share what home means to you and why community matters", "DARE", "Proverbs 22:3 - The prudent see danger and take refuge", "Kwisi home!"},
-            {"Challenge someone to a 1-on-1 coffee date to deepen your friendship", "DARE", "Proverbs 27:17 - As iron sharpens iron, so one person sharpens another", "Kwisi connection!"}
+            {"Share your biggest academic or career fear", "DARE", "Philippians 4:6 - Do not be anxious, present your requests to God", "Kwisi authenticity!"},
+            {"Tell someone a mistake you made and what you learned", "DARE", "Proverbs 12:1 - Whoever loves discipline loves knowledge", "Kwisi growth!"},
+            {"Share how you've struggled with mental health or stress", "DARE", "2 Corinthians 12:9 - My grace is sufficient for you", "Kwisi vulnerability!"},
+            {"Give someone advice based on your real-life experience", "DARE", "Proverbs 27:12 - The prudent see danger and take refuge", "Kwisi wisdom!"},
+            {"Share a time you felt lonely or out of place", "DARE", "Psalm 23:4 - You are with me in the valley", "Kwisi support!"},
+            {"Challenge someone to pursue a goal they've been avoiding", "DARE", "Proverbs 31:8 - Speak up for those who have no voice", "Kwisi encouragement!"}
         };
 
         for (String[] data : dareData) {
@@ -250,14 +250,14 @@ public class GameService {
 
     private void generateCharadesChallenges(Game game) {
         String[][] charadesData = {
-            {"Feeling lonely at university", "CHARADES", "Psalm 25:16 - Turn to me and be gracious to me", "Kwisi understanding!"},
-            {"Finding your tribe/community", "CHARADES", "Proverbs 13:20 - Walk with the wise and become wise", "Kwisi connection!"},
-            {"Overcoming self-doubt", "CHARADES", "Philippians 4:13 - I can do all things through Christ", "Kwisi courage!"},
-            {"Celebrating a friend's success", "CHARADES", "Romans 12:15 - Rejoice with those who rejoice", "Kwisi celebration!"},
-            {"Being vulnerable and opening up", "CHARADES", "Ephesians 5:1 - Be imitators of God", "Kwisi authenticity!"},
-            {"Building bridges across differences", "CHARADES", "1 Corinthians 12:12 - One body with many parts", "Kwisi unity!"},
-            {"Offering forgiveness and grace", "CHARADES", "Matthew 18:22 - Forgive seventy times seven", "Kwisi peace!"},
-            {"Experiencing God's presence in community", "CHARADES", "Matthew 18:20 - Where two or three gather, I am there", "Kwisi sacred!"}
+            {"Cramming for an exam the night before", "CHARADES", "Proverbs 21:5 - The plans of the diligent lead to profit", "Kwisi reality!"},
+            {"Getting your first rejection (job, relationship, or dream)", "CHARADES", "Romans 5:3 - We also glory in our sufferings", "Kwisi resilience!"},
+            {"Finally understanding a difficult concept", "CHARADES", "Proverbs 18:15 - The heart of the discerning acquires knowledge", "Kwisi breakthrough!"},
+            {"Pretending to be fine when you're actually struggling", "CHARADES", "Matthew 11:28 - Come to me all who are weary", "Kwisi honesty!"},
+            {"Realizing you made a wrong choice and needing to change course", "CHARADES", "Proverbs 14:12 - There is a way that appears right but leads to death", "Kwisi correction!"},
+            {"Supporting a friend through a difficult time", "CHARADES", "1 Thessalonians 5:11 - Encourage one another", "Kwisi presence!"},
+            {"Stepping out of your comfort zone for the first time", "CHARADES", "Joshua 1:9 - Be strong and courageous", "Kwisi courage!"},
+            {"Discovering a hidden talent or passion within yourself", "CHARADES", "1 Peter 4:10 - Each of you should use your gifts", "Kwisi discovery!"}
         };
 
         for (String[] data : charadesData) {
@@ -268,14 +268,14 @@ public class GameService {
 
     private void generateWordChallenges(Game game) {
         String[][] wordData = {
-            {"Belonging", "WORD", "Ephesians 2:14-16 - We are no longer foreigners", "Kwisi home!"},
-            {"Vulnerability", "WORD", "2 Corinthians 12:9 - My grace is sufficient for you", "Kwisi authenticity!"},
-            {"Community", "WORD", "Acts 2:44 - All the believers were together", "Kwisi unity!"},
-            {"Growth", "WORD", "2 Peter 3:18 - Grow in the grace and knowledge", "Kwisi growth!"},
-            {"Connection", "WORD", "1 Thessalonians 5:11 - Encourage one another", "Kwisi bonds!"},
-            {"Acceptance", "WORD", "Romans 15:7 - Accept one another as Christ accepted you", "Kwisi welcome!"},
-            {"Authenticity", "WORD", "Proverbs 12:17 - The honest witness tells the truth", "Kwisi truth!"},
-            {"Gratitude", "WORD", "1 Thessalonians 5:18 - Give thanks in all circumstances", "Kwisi appreciation!"}
+            {"Uncertainty", "WORD", "Proverbs 3:5-6 - Trust in the Lord with all your heart", "Kwisi growth!"},
+            {"Exhaustion", "WORD", "Matthew 11:28 - Come to me and I will give you rest", "Kwisi rest!"},
+            {"Transformation", "WORD", "2 Corinthians 5:17 - If anyone is in Christ, they are new", "Kwisi renewal!"},
+            {"Courage", "WORD", "Deuteronomy 31:6 - Be strong and courageous", "Kwisi strength!"},
+            {"Purpose", "WORD", "Jeremiah 29:11 - I have plans for you, plans for good", "Kwisi direction!"},
+            {"Resilience", "WORD", "James 1:2-3 - Consider it joy to face trials", "Kwisi perseverance!"},
+            {"Authenticity", "WORD", "Proverbs 12:17 - The honest witness tells the truth", "Kwisi real!"},
+            {"Balance", "WORD", "Ecclesiastes 3:1 - There is a time for everything", "Kwisi harmony!"}
         };
 
         for (String[] data : wordData) {
@@ -286,12 +286,12 @@ public class GameService {
 
     private void generateQuestionsChallenges(Game game) {
         String[][] questionData = {
-            {"An emotion you feel when you finally find where you belong", "QUESTION", "Psalm 37:4 - Take delight in the Lord", "Kwisi acceptance!"},
-            {"Something that bridges the gap between strangers in a community", "QUESTION", "Proverbs 27:17 - Iron sharpens iron", "Kwisi connection!"},
-            {"A person who has shaped your character and values", "QUESTION", "Proverbs 13:20 - Walk with the wise", "Kwisi gratitude!"},
-            {"Something that happens when you share your true self", "QUESTION", "John 8:32 - The truth will set you free", "Kwisi authenticity!"},
-            {"A moment that changed your perspective on community", "QUESTION", "2 Corinthians 5:17 - All things become new", "Kwisi transformation!"},
-            {"Something that demonstrates genuine care in a family", "QUESTION", "1 Peter 4:10 - Use your gifts to serve", "Kwisi love!"}
+            {"Something you desperately needed but was afraid to ask for", "QUESTION", "Philippians 4:6 - Present your requests to God", "Kwisi vulnerability!"},
+            {"A difficult decision that changed the course of your life", "QUESTION", "Proverbs 16:9 - The Lord establishes the steps of the godly", "Kwisi choice!"},
+            {"A time you had to start over from scratch", "QUESTION", "Lamentations 3:22-23 - His mercies are new every morning", "Kwisi beginning!"},
+            {"Something you gave up to become who you are today", "QUESTION", "Matthew 16:25 - Whoever loses their life for me will find it", "Kwisi sacrifice!"},
+            {"A moment when you realized your strength", "QUESTION", "Philippians 4:13 - I can do all things through Christ", "Kwisi power!"},
+            {"Someone who believed in you when you didn't believe in yourself", "QUESTION", "Proverbs 27:12 - The prudent see danger and take refuge", "Kwisi gratitude!"}
         };
 
         for (String[] data : questionData) {

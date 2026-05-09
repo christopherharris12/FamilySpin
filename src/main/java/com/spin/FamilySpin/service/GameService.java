@@ -248,61 +248,27 @@ public class GameService {
 
     private void generateTriviaQuestions(Game game) {
         String[][] triviaData = {
-            // Easy Fun Questions
-            {"What's your favorite food?", "Varies - it's fun!", "Fun", "Kwisi favorites!"},
-            {"What's your go-to movie genre?", "Action, Comedy, Drama, Horror - any!", "Fun", "Kwisi entertainment!"},
-            {"If you could travel anywhere, where?", "Beach, Mountains, City, Country - anywhere!", "Travel", "Kwisi adventures!"},
-            {"What's your favorite season?", "Summer, Fall, Winter, Spring", "Life", "Kwisi weather!"},
-            {"What's your guilty pleasure snack?", "Pizza, Chips, Cake, Ice cream - anything!", "Fun", "Kwisi treats!"},
-            
-            // Popular & Easy
-            {"Who's your celebrity crush?", "Anyone famous you like!", "Pop Culture", "Kwisi crush!"},
-            {"What's the best day of the week?", "Friday, Saturday, Sunday!", "Life", "Kwisi days!"},
-            {"Coffee or Tea?", "Everyone has an opinion!", "Lifestyle", "Kwisi drinks!"},
-            {"What time do you usually wake up?", "Early bird or night owl?", "Life", "Kwisi sleep!"},
-            {"What's your favorite music genre?", "Hip-hop, Pop, Rock, R&B, Reggae!", "Music", "Kwisi vibes!"},
-            
-            // Relatable & Easy
-            {"What's your superpower?", "Making people laugh, listening, cooking!", "Fun", "Kwisi power!"},
-            {"If you were an animal, what would you be?", "Dog, Cat, Lion, Eagle!", "Fun", "Kwisi animal!"},
-            {"What's your favorite thing about family?", "The laughter, the love, the memories!", "Family", "Kwisi love!"},
-            {"What sport do you like to play or watch?", "Football, Basketball, Tennis, Swimming!", "Sports", "Kwisi games!"},
-            {"What's your favorite dessert?", "Cake, Ice cream, Chocolate, Fruit!", "Food", "Kwisi sweet!"},
-            
-            // Light & Happy
-            {"What makes you laugh the most?", "Jokes, Friends, Family, Movies!", "Joy", "Kwisi laughter!"},
-            {"What's your go-to karaoke song?", "Any song you love to sing!", "Music", "Kwisi singing!"},
-            {"Would you rather: Beach or Mountains?", "Pick your adventure!", "Travel", "Kwisi nature!"},
-            {"What's your favorite emoji?", "😂 😍 🔥 💯 - any one!", "Fun", "Kwisi express!"},
-            {"What's the best time of day?", "Morning, Afternoon, Evening, Night!", "Life", "Kwisi time!"},
-            
-            // Simple & Fun
-            {"What's your favorite color?", "Red, Blue, Green, Purple - anything!", "Life", "Kwisi colors!"},
-            {"Do you prefer hot or cold weather?", "Summer heat or winter cool?", "Life", "Kwisi weather!"},
-            {"What's your favorite hobby?", "Gaming, Reading, Sports, Art!", "Life", "Kwisi passion!"},
-            {"Who's your favorite family member?", "Mom, Dad, Sibling, Cousin!", "Family", "Kwisi person!"},
-            {"What's your favorite app?", "WhatsApp, TikTok, Instagram, YouTube!", "Tech", "Kwisi app!"},
-            
-            // Popular Culture
-            {"Favorite superhero?", "Batman, Superman, Spider-Man, Ironman!", "Pop Culture", "Kwisi hero!"},
-            {"Cats or Dogs?", "A classic question!", "Animals", "Kwisi pet!"},
-            {"What's your favorite TV show?", "Game of Thrones, Friends, Breaking Bad!", "TV", "Kwisi show!"},
-            {"Would you rather: Fly or Invisibility?", "Pick your superpower!", "Fun", "Kwisi power!"},
-            {"What's your favorite holiday?", "Christmas, New Year, Birthday!", "Holidays", "Kwisi celebration!"},
-            
-            // Quick & Easy
-            {"Breakfast: Sweet or Savory?", "Pancakes or Eggs?", "Food", "Kwisi morning!"},
-            {"Prefer: Phone or Laptop?", "Which tech do you use most?", "Tech", "Kwisi device!"},
-            {"Right-handed or Left-handed?", "Which side do you write with?", "Life", "Kwisi hand!"},
-            {"Your favorite drink?", "Water, Juice, Soda, Coffee!", "Drinks", "Kwisi sip!"},
-            {"Night owl or Early bird?", "When are you most awake?", "Life", "Kwisi sleep!"},
-            
-            // Relatable Stories
-            {"What's something funny that happened to you?", "Share a fun memory!", "Memories", "Kwisi funny!"},
-            {"What skill would you like to learn?", "Dancing, Cooking, Drawing!", "Growth", "Kwisi learn!"},
-            {"Your biggest achievement?", "Anything you're proud of!", "Achievement", "Kwisi pride!"},
-            {"What's your dream job?", "Doctor, Teacher, Musician, CEO!", "Dreams", "Kwisi work!"},
-            {"Best place you've visited?", "Any country or city!", "Travel", "Kwisi explore!"}
+            // Kinyarwanda short verses and their locations (book chapter:verse)
+            {"Kuko Imana yakunze isi cyane, yatanze Umwana wayo umwe, ngo umwizera wese atarimbuka ahubwo ahabwe ubugingo buhoraho.", "Yohana 3:16", "Biblical", "Kwisi verse"},
+            {"Uwiteka ni we mufasha wanjye; sinzagira icyo ntinya.", "Zaburi 23:1", "Biblical", "Kwisi verse"},
+            {"Nshobora byose mubimufasha.", "Aba-Filipi 4:13", "Biblical", "Kwisi verse"},
+            {"Muri byose Imana ikorera neza abamukunda.", "Abaroma 8:28", "Biblical", "Kwisi verse"},
+            {"Wizere Uwiteka n'umutima wawe wose, ntukishingikirize ku bwenge bwawe.", "Imigani 3:5", "Biblical", "Kwisi verse"},
+            {"Shaka ubwami bw'Imana n'ubugwaneza bwayo, ibindi byose bizongerwaho.", "Matayo 6:33", "Biblical", "Kwisi verse"},
+            {"Mfite imigambi myiza kuri mwe, si migambi y'ihirima", "Yeremiya 29:11", "Biblical", "Kwisi verse"},
+            {"Ukwishima kw'Umwami niwo ngabo yanjye.", "Zaburi 118:24", "Biblical", "Kwisi verse"},
+            {"Humura, nzaba kumwe nawe; uceceke, menya ko ndi Imana.", "Zaburi 46:10", "Biblical", "Kwisi verse"},
+            {"Abashaka Uwiteka bazahabwa imbaraga nk'iy'igishoro cy'ikibunga.", "Yesaya 40:31", "Biblical", "Kwisi verse"},
+            {"Umusaruro w'Umwuka ni urukundo, ibyishimo, amahoro...", "Abagalatiya 5:22", "Biblical", "Kwisi verse"},
+            {"Urukundo rufite ubwihangane, bukagira neza; ntirwiyemera...", "1 Abakorinto 13:4", "Biblical", "Kwisi verse"},
+            {"Mwihangane kandi mwizere, Uwiteka ni we utanga imbabazi.", "Zaburi 86:5", "Biblical", "Kwisi verse"},
+            {"Ntukareke gukora ibyiza; kuko igihe cyo gusarura kizagera.", "Aba-Hebulayo 6:10", "Biblical", "Kwisi verse"},
+            {"Mugire ubuntu, muhe ibyo mukwiye abandi.", "Abaefeso 4:32", "Biblical", "Kwisi verse"},
+            {"Mwizerane mu byo mukora byose, mukurikize inzira y'ukuri.", "Imigani 4:25", "Biblical", "Kwisi verse"},
+            {"Ntimukirengagize gukunda mugenzi wanyu nk'uko mwikunda.", "Matayo 22:39", "Biblical", "Kwisi verse"},
+            {"Ntimugire ubwoba; kuko ndi kumwe namwe.", "Yoshua 1:9", "Biblical", "Kwisi verse"},
+            {"Mubabarirane uko Imana yabababarije muri Kristo.", "Abakolosayi 3:13", "Biblical", "Kwisi verse"},
+            {"Mwishimire Uwiteka, kuko ari we Mana y'ubuntu.", "Zaburi 100:2", "Biblical", "Kwisi verse"}
         };
 
         for (String[] data : triviaData) {

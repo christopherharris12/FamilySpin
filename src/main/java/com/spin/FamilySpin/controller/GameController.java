@@ -2,6 +2,7 @@ package com.spin.FamilySpin.controller;
 
 import com.spin.FamilySpin.model.*;
 import com.spin.FamilySpin.repository.UserRepository;
+import com.spin.FamilySpin.repository.GameQuestionRepository;
 import com.spin.FamilySpin.service.GameService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,12 @@ public class GameController {
 
     private final GameService gameService;
     private final UserRepository userRepository;
+    private final GameQuestionRepository gameQuestionRepository;
 
-    public GameController(GameService gameService, UserRepository userRepository) {
+    public GameController(GameService gameService, UserRepository userRepository, GameQuestionRepository gameQuestionRepository) {
         this.gameService = gameService;
         this.userRepository = userRepository;
+        this.gameQuestionRepository = gameQuestionRepository;
     }
 
     @GetMapping("/today")
@@ -86,9 +89,10 @@ public class GameController {
     }
 
     @PostMapping("/{gameId}/answer")
-    public Map<String, Object> recordAnswer(
+        public Map<String, Object> recordAnswer(
             @PathVariable Long gameId,
             @RequestParam String answerText,
+            @RequestParam(required = false) Long questionId,
             HttpSession session) {
         
         Long userId = (Long) session.getAttribute("userId");
@@ -110,17 +114,40 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No attempts remaining for this game today.");
         }
 
-        // Record the answer
+        // Record the answer attempt
         gameService.recordAnswer(user, game.get(), answerText);
+
+        // Validate correctness if questionId provided
+        boolean correct = false;
+        String correctAnswer = null;
+        if (questionId != null) {
+            Optional<GameQuestion> qOpt = gameQuestionRepository.findById(questionId);
+            if (qOpt.isPresent()) {
+                GameQuestion q = qOpt.get();
+                correctAnswer = q.getAnswer();
+                // Normalize strings for simple comparison
+                String expected = q.getAnswer() == null ? "" : q.getAnswer().replaceAll("\\s+", "").replaceAll("[^a-zA-Z0-9:]", "").toLowerCase();
+                String given = answerText == null ? "" : answerText.replaceAll("\\s+", "").replaceAll("[^a-zA-Z0-9:]", "").toLowerCase();
+                correct = expected.equals(given);
+
+                if (correct) {
+                    // award points for correct answer
+                    gameService.addScore(user, game.get(), 20, gameService.getCurrentWeekNumber());
+                }
+            }
+        }
 
         // Get updated remaining attempts
         int updatedRemaining = gameService.getRemainingAttempts(user, game.get());
 
-        return Map.of(
+        Map<String, Object> resp = Map.of(
             "status", "Answer recorded",
             "remainingAttempts", updatedRemaining,
-            "message", updatedRemaining == 0 ? "That was your last attempt!" : "Answer recorded!"
+            "correct", correct,
+            "correctAnswer", correctAnswer == null ? "" : correctAnswer
         );
+
+        return resp;
     }
 
     @GetMapping("/{gameId}/attempts")

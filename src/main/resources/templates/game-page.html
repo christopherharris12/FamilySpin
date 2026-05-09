@@ -421,11 +421,16 @@
             <!-- TRIVIA GAME -->
             <div th:if="${playable && game.gameType == 'TRIVIA'}">
                 <div th:if="${question}" style="text-align: center;">
-                    <div class="trivia-question" th:text="${question.question}"></div>
-                    <div class="trivia-bible" th:if="${question.bibleVerse}">
-                        📖 Bible Verse: [[${question.bibleVerse}]]
-                    </div>
-                    <input type="text" class="answer-input" id="triviaAnswer" placeholder="Type your answer..." />
+                        <div class="trivia-question" th:text="${question.question}"></div>
+                        <div class="trivia-bible" th:if="${question.bibleVerse}">
+                            📖 Bible Verse: [[${question.bibleVerse}]]
+                        </div>
+                        <input type="hidden" id="questionId" th:value="${question.id}" />
+                        <input type="text" class="answer-input" id="triviaAnswer" placeholder="Type your answer..." />
+                        <div style="margin-top:8px">
+                            <button id="voiceBtn" class="btn-secondary" onclick="startVoice()">🎤 Record Answer</button>
+                            <span id="voiceStatus" style="margin-left:10px;color:#1f2937;font-weight:600;"></span>
+                        </div>
                     <div class="btn-group">
                         <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
                         <button class="btn-secondary" onclick="skipQuestion()">Skip</button>
@@ -438,7 +443,7 @@
 
             <!-- DARE GAME -->
             <div th:if="${playable && game.gameType == 'DARE'}">
-                <div th:if="${challenge}" style="text-align: center;">
+                    <div th:if="${challenge}" style="text-align: center;">
                     <h3>Your Challenge</h3>
                     <div class="dare-challenge">
                         <h3>🎯 KWISI - Here's Your Dare!</h3>
@@ -446,6 +451,7 @@
                         <div class="dare-bible" th:if="${challenge.bibleVerse}">
                             📖 [[${challenge.bibleVerse}]]
                         </div>
+                        <input type="hidden" id="questionId" th:value="${challenge.id}" />
                         <div class="dare-kwisi" th:text="${challenge.kwisiPhrase} ?: '🎉'"></div>
                     </div>
                     <div class="btn-group">
@@ -540,8 +546,8 @@
     </div>
 
     <script th:inline="javascript">
-        // Timer countdown - 1 minute per game, clamped at 00:00
-        let timeLeft = 1 * 60;
+        // Timer countdown - 30 seconds per game, clamped at 00:00
+        let timeLeft = 30;
         let gameId = [[${game.id}]];
         const timerEl = document.getElementById('timer');
 
@@ -569,24 +575,65 @@
         }, 1000);
 
         function recordAnswerToServer(answerText, gameType) {
-            fetch(`/api/games/${gameId}/answer?answerText=${encodeURIComponent(answerText)}`, {
+            // include questionId when available
+            const qEl = document.getElementById('questionId');
+            const qId = qEl ? qEl.value : '';
+            const url = `/api/games/${gameId}/answer?answerText=${encodeURIComponent(answerText)}${qId ? '&questionId=' + encodeURIComponent(qId) : ''}`;
+            fetch(url, {
                 method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
-                if (data.remainingAttempts === 0) {
-                    alert('✅ ' + gameType + ' completed! That was your LAST attempt.\nCome back tomorrow to play again!');
-                    setTimeout(() => window.location.href = '/games', 2000);
-                } else if (data.remainingAttempts === 1) {
-                    alert('✅ ' + gameType + ' completed! You have 1 attempt left for today.');
+                if (data.correct) {
+                    alert('Correct! +' + (data.correct ? 20 : 0) + ' points earned!');
                 } else {
-                    alert('✅ ' + gameType + ' completed! You have ' + data.remainingAttempts + ' attempts left.');
+                    // show correct answer immediately when user fails
+                    const correct = data.correctAnswer || 'Answer not available';
+                    alert('Incorrect. Correct answer: ' + correct);
+                }
+
+                if (data.remainingAttempts === 0) {
+                    setTimeout(() => window.location.href = '/games', 1400);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('⚠️ Error recording your answer. Please try again.');
             });
+        }
+
+        // Voice recognition (Web Speech API)
+        let recognition;
+        function startVoice() {
+            const status = document.getElementById('voiceStatus');
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition not supported in this browser. Use Chrome desktop for best results.');
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'rw-RW';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+            status.innerText = 'Listening...';
+            recognition.start();
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('triviaAnswer').value = transcript;
+                status.innerText = 'Captured: ' + transcript;
+                // auto-submit
+                recordAnswerToServer(transcript, 'Voice Answer');
+            };
+
+            recognition.onerror = (e) => {
+                console.error('Speech error', e);
+                status.innerText = 'Error capturing voice';
+            };
+
+            recognition.onend = () => {
+                status.innerText = '';
+            };
         }
 
         function submitTrivia() {

@@ -1,7 +1,6 @@
 package com.spin.FamilySpin.config;
 
 import com.zaxxer.hikari.HikariDataSource;
-import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -9,6 +8,8 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class DataSourceConfig {
@@ -22,13 +23,22 @@ public class DataSourceConfig {
             dbUrl = env.getProperty("DATABASE_URL");
         }
 
+        if (dbUrl == null || dbUrl.isBlank()) {
+            throw new IllegalStateException("Missing DATABASE_URL or JDBC_DATABASE_URL in prod profile");
+        }
+
         HikariDataSource ds = new HikariDataSource();
 
-        if (dbUrl != null && dbUrl.startsWith("postgres://")) {
+        if (dbUrl.startsWith("postgres://") || dbUrl.startsWith("postgresql://")) {
             URI uri = new URI(dbUrl);
-            String[] userInfo = uri.getUserInfo().split(":");
-            String username = userInfo[0];
-            String password = userInfo.length > 1 ? userInfo[1] : "";
+            String userInfo = uri.getUserInfo();
+            if (userInfo == null || userInfo.isBlank()) {
+                throw new IllegalStateException("DATABASE_URL is missing username/password information");
+            }
+
+            String[] userParts = userInfo.split(":", 2);
+            String username = URLDecoder.decode(userParts[0], StandardCharsets.UTF_8);
+            String password = userParts.length > 1 ? URLDecoder.decode(userParts[1], StandardCharsets.UTF_8) : "";
             String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
 
             ds.setJdbcUrl(jdbcUrl);
@@ -37,9 +47,14 @@ public class DataSourceConfig {
         } else {
             // Fallback to explicit JDBC env vars
             String jdbc = env.getProperty("JDBC_DATABASE_URL");
-            ds.setJdbcUrl(jdbc != null ? jdbc : env.getProperty("spring.datasource.url"));
-            ds.setUsername(env.getProperty("JDBC_DATABASE_USERNAME", env.getProperty("spring.datasource.username")));
-            ds.setPassword(env.getProperty("JDBC_DATABASE_PASSWORD", env.getProperty("spring.datasource.password")));
+            String jdbcUrl = (jdbc != null && !jdbc.isBlank()) ? jdbc : env.getProperty("spring.datasource.url");
+            if (jdbcUrl == null || jdbcUrl.isBlank()) {
+                throw new IllegalStateException("Missing JDBC_DATABASE_URL or DATABASE_URL in prod profile");
+            }
+
+            ds.setJdbcUrl(jdbcUrl);
+            ds.setUsername(env.getProperty("JDBC_DATABASE_USERNAME", env.getProperty("spring.datasource.username", "")));
+            ds.setPassword(env.getProperty("JDBC_DATABASE_PASSWORD", env.getProperty("spring.datasource.password", "")));
         }
 
         ds.setMaximumPoolSize(Integer.parseInt(env.getProperty("spring.datasource.hikari.maximum-pool-size", "10")));

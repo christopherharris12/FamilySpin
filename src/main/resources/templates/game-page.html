@@ -539,21 +539,33 @@
         </div>
     </div>
 
-    <script>
-        // Timer countdown - 1 minute per game
+    <script th:inline="javascript">
+        // Timer countdown - 1 minute per game, clamped at 00:00
         let timeLeft = 1 * 60;
         let gameId = [[${game.id}]];
-        
-        setInterval(() => {
-            timeLeft--;
-            const mins = Math.floor(timeLeft / 60);
-            const secs = timeLeft % 60;
-            document.getElementById('timer').innerText = 
-                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
-            
-            if (timeLeft <= 30) {
-                document.getElementById('timer').classList.add('warning');
+        const timerEl = document.getElementById('timer');
+
+        function renderTimer() {
+            const safeTime = Math.max(timeLeft, 0);
+            const mins = Math.floor(safeTime / 60);
+            const secs = safeTime % 60;
+            timerEl.innerText = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+            if (safeTime <= 30) {
+                timerEl.classList.add('warning');
             }
+        }
+
+        const timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                timeLeft = 0;
+                renderTimer();
+                clearInterval(timerInterval);
+                return;
+            }
+
+            timeLeft--;
+            renderTimer();
         }, 1000);
 
         function recordAnswerToServer(answerText, gameType) {

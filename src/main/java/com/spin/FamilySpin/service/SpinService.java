@@ -9,6 +9,7 @@ import com.spin.FamilySpin.model.SpinState;
 import com.spin.FamilySpin.model.User;
 import com.spin.FamilySpin.repository.DynamicMemberRepository;
 import com.spin.FamilySpin.repository.GamePlayRepository;
+import com.spin.FamilySpin.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,16 +31,19 @@ public class SpinService {
     private final List<SpinHistoryEntry> history;
     private final java.util.Deque<String> recentLogins;
     private final GamePlayRepository gamePlayRepository;
+    private final GameRepository gameRepository;
     private final DynamicMemberRepository dynamicMemberRepository;
     private final Set<Long> usersSpunThisSession;
     private int sessionNumber;
     private Instant sessionStartedAt;
     private Instant sessionCompletedAt;
 
-    public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository, DynamicMemberRepository dynamicMemberRepository) {
+    public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository, GameRepository gameRepository, DynamicMemberRepository dynamicMemberRepository) {
         this.originalMembers = parseMembers(seedMembers);
         this.rosterMembers = new ArrayList<>(originalMembers);
         this.dynamicMemberRepository = dynamicMemberRepository;
+        this.gamePlayRepository = gamePlayRepository;
+        this.gameRepository = gameRepository;
         
         // Load dynamically added members from database
         List<DynamicMember> dynamicMembers = dynamicMemberRepository.findAll();
@@ -56,7 +60,6 @@ public class SpinService {
         this.sessionNumber = 1;
         this.sessionStartedAt = Instant.now();
         this.sessionCompletedAt = null;
-        this.gamePlayRepository = gamePlayRepository;
     }
 
     public synchronized void recordLogin(User user) {
@@ -164,6 +167,18 @@ public class SpinService {
         sessionNumber++;
         sessionStartedAt = Instant.now();
         sessionCompletedAt = null;
+    }
+
+    public synchronized void resetGames() {
+        // Delete all existing games
+        gameRepository.deleteAll();
+        // Reinitialize games for current week
+        java.time.LocalDate today = java.time.LocalDate.now(java.time.ZoneId.systemDefault());
+        java.time.LocalDate weekStart = today.with(java.time.DayOfWeek.SUNDAY);
+        int currentWeekNumber = (int) (today.toEpochDay() / 7);
+        java.time.Instant weekStartInstant = weekStart.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant();
+        // This will be called through GameService, but for now just delete
+        System.out.println("✓ Games reset. New games will be initialized on next app restart or when GameService runs.");
     }
 
     private List<String> parseMembers(String seedMembers) {

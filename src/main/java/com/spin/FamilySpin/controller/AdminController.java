@@ -119,6 +119,19 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @PostMapping("/reset-games")
+    public String resetGames(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/login";
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null || !user.isAdmin()) {
+            return "redirect:/dashboard";
+        }
+
+        spinService.resetGames();
+        return "redirect:/dashboard";
+    }
+
     @PostMapping("/add-member")
     public String addMember(HttpSession session,
                             @org.springframework.web.bind.annotation.RequestParam String familyMemberName) {

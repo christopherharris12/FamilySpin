@@ -398,7 +398,18 @@
             </div>
         </header>
 
-        <div class="game-board">
+        <!-- ATTEMPTS NOTIFICATION -->
+        <div th:if="${playable}" style="margin-bottom: 20px;">
+            <div th:if="${remainingAttempts > 0}" style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px 20px; border-radius: 8px; color: #1e40af; font-weight: 600;">
+                📝 <span th:if="${remainingAttempts == 2}">You have 2 attempts available today</span>
+                <span th:if="${remainingAttempts == 1}">⚠️ LAST ATTEMPT! After this, you cannot answer this game today</span>
+            </div>
+            <div th:if="${remainingAttempts == 0}" style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px; color: #991b1b; font-weight: 600; text-align: center; font-size: 16px;">
+                🚫 You have already used both attempts for today's game. Come back tomorrow to play again!
+            </div>
+        </div>
+
+        <div class="game-board" th:if="${remainingAttempts > 0}">
             <!-- LOCKED STATE -->
             <div th:if="${!playable}" class="lock-overlay">
                 <div style="font-size: 60px; margin-bottom: 20px;">🔒</div>
@@ -515,11 +526,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- NO ATTEMPTS LEFT MESSAGE -->
+        <div th:if="${playable && remainingAttempts == 0}" class="game-board">
+            <div style="text-align: center; padding: 60px 40px; background: #fee2e2; border-radius: 15px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">🚫</div>
+                <h2 style="color: #991b1b; margin-bottom: 15px;">Game Attempts Exhausted</h2>
+                <p style="color: #7f1d1d; font-size: 18px; margin-bottom: 10px;">You have used both of your 2 allowed attempts for today's game.</p>
+                <p style="color: #7f1d1d; font-size: 16px; margin-bottom: 30px;">Come back tomorrow to play again!</p>
+                <button class="back-btn" onclick="window.location.href='/games'" style="background: var(--primary); font-size: 16px; padding: 12px 30px;">← Back to Games Hub</button>
+            </div>
+        </div>
     </div>
 
     <script>
         // Timer countdown - 1 minute per game
         let timeLeft = 1 * 60;
+        let gameId = [[${game.id}]];
+        
         setInterval(() => {
             timeLeft--;
             const mins = Math.floor(timeLeft / 60);
@@ -532,55 +556,80 @@
             }
         }, 1000);
 
+        function recordAnswerToServer(answerText, gameType) {
+            fetch(`/api/games/${gameId}/answer?answerText=${encodeURIComponent(answerText)}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.remainingAttempts === 0) {
+                    alert('✅ ' + gameType + ' completed! That was your LAST attempt.\nCome back tomorrow to play again!');
+                    setTimeout(() => window.location.href = '/games', 2000);
+                } else if (data.remainingAttempts === 1) {
+                    alert('✅ ' + gameType + ' completed! You have 1 attempt left for today.');
+                } else {
+                    alert('✅ ' + gameType + ' completed! You have ' + data.remainingAttempts + ' attempts left.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('⚠️ Error recording your answer. Please try again.');
+            });
+        }
+
         function submitTrivia() {
             const answer = document.getElementById('triviaAnswer').value;
             if (answer.trim()) {
-                alert('Trivia answer submitted! Waiting for admin verification...');
+                recordAnswerToServer(answer, 'Trivia Answer');
+            } else {
+                alert('Please type an answer before submitting!');
             }
         }
 
         function skipQuestion() {
-            location.reload();
+            recordAnswerToServer('[SKIPPED]', 'Question');
         }
 
         function completeDare() {
-            alert('Dare completed! 🎉 +10 points earned!');
+            recordAnswerToServer('[COMPLETED_DARE]', 'Dare');
         }
 
         function skipDare() {
-            location.reload();
+            recordAnswerToServer('[SKIPPED]', 'Dare');
         }
 
         function completeCharades() {
-            alert('Word guessed correctly! +15 points earned!');
+            recordAnswerToServer('[COMPLETED_CHARADES]', 'Charades');
         }
 
         function skipCharades() {
-            location.reload();
+            recordAnswerToServer('[SKIPPED]', 'Charades');
         }
 
         function addWord() {
             const word = document.getElementById('nextWord').value;
             if (word.trim()) {
-                alert('Word added to chain! ' + word);
+                recordAnswerToServer(word, 'Word Association');
                 document.getElementById('nextWord').value = '';
+            } else {
+                alert('Please type a word!');
             }
         }
 
         function endChain() {
-            alert('Chain ended! Points calculated based on chain length!');
+            recordAnswerToServer('[CHAIN_ENDED]', 'Word Chain');
         }
 
         function guessedCorrect() {
-            alert('Correct! +20 points earned!');
+            recordAnswerToServer('[GUESSED_CORRECT]', '20 Questions');
         }
 
         function endQuestions() {
-            alert('Game ended! Points based on questions used!');
+            recordAnswerToServer('[QUESTIONS_ENDED]', '20 Questions');
         }
 
         function resetMemory() {
-            location.reload();
+            recordAnswerToServer('[MEMORY_RESET]', 'Memory Match');
         }
     </script>
 </body>

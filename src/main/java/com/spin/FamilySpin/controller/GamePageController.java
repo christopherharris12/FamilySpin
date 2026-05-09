@@ -73,8 +73,11 @@ public class GamePageController {
 
         Game game = maybeGame.get();
         boolean playable = gameService.isGamePlayable(game);
+        int remainingAttempts = gameService.getRemainingAttempts(user, game);
+        
         model.addAttribute("game", game);
         model.addAttribute("playable", playable);
+        model.addAttribute("remainingAttempts", remainingAttempts);
         model.addAttribute("username", user.getUsername());
         model.addAttribute("userIsAdmin", user.isAdmin());
         model.addAttribute("weekNumber", gameService.getCurrentWeekNumber());

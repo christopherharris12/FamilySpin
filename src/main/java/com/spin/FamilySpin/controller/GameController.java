@@ -85,7 +85,72 @@ public class GameController {
         return Map.of("status", "Score added", "points", points);
     }
 
+    @PostMapping("/{gameId}/answer")
+    public Map<String, Object> recordAnswer(
+            @PathVariable Long gameId,
+            @RequestParam String answerText,
+            HttpSession session) {
+        
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please log in first.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found."));
+
+        Optional<Game> game = gameService.getGameById(gameId);
+        if (game.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
+        }
+
+        // Check if user has attempts left
+        int remainingAttempts = gameService.getRemainingAttempts(user, game.get());
+        if (remainingAttempts <= 0) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No attempts remaining for this game today.");
+        }
+
+        // Record the answer
+        gameService.recordAnswer(user, game.get(), answerText);
+
+        // Get updated remaining attempts
+        int updatedRemaining = gameService.getRemainingAttempts(user, game.get());
+
+        return Map.of(
+            "status", "Answer recorded",
+            "remainingAttempts", updatedRemaining,
+            "message", updatedRemaining == 0 ? "That was your last attempt!" : "Answer recorded!"
+        );
+    }
+
+    @GetMapping("/{gameId}/attempts")
+    public Map<String, Object> getRemainingAttempts(
+            @PathVariable Long gameId,
+            HttpSession session) {
+        
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please log in first.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found."));
+
+        Optional<Game> game = gameService.getGameById(gameId);
+        if (game.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found.");
+        }
+
+        int remaining = gameService.getRemainingAttempts(user, game.get());
+
+        return Map.of(
+            "remainingAttempts", remaining,
+            "canPlay", remaining > 0
+        );
+    }
+
     @GetMapping("/leaderboard")
+
     public Map<String, Object> getLeaderboard() {
         List<Map<String, Object>> rankings = gameService.getWeeklyLeaderboard();
         return Map.of("leaderboard", rankings, "week", gameService.getCurrentWeekNumber());

@@ -19,6 +19,7 @@ public class GameService {
     private final GameScoreRepository gameScoreRepository;
     private final GameQuestionRepository gameQuestionRepository;
     private final GameChallengeRepository gameChallengeRepository;
+    private final GameAnswerRepository gameAnswerRepository;
 
     private int currentWeekNumber;
     private Instant weekStartDate;
@@ -26,11 +27,13 @@ public class GameService {
     public GameService(GameRepository gameRepository,
                       GameScoreRepository gameScoreRepository,
                       GameQuestionRepository gameQuestionRepository,
-                      GameChallengeRepository gameChallengeRepository) {
+                      GameChallengeRepository gameChallengeRepository,
+                      GameAnswerRepository gameAnswerRepository) {
         this.gameRepository = gameRepository;
         this.gameScoreRepository = gameScoreRepository;
         this.gameQuestionRepository = gameQuestionRepository;
         this.gameChallengeRepository = gameChallengeRepository;
+        this.gameAnswerRepository = gameAnswerRepository;
         initializeWeek();
         initializeCurrentWeekGamesIfMissing();
     }
@@ -95,6 +98,37 @@ public class GameService {
             GameScore score = new GameScore(user, game, points, weekNumber);
             gameScoreRepository.save(score);
         }
+    }
+
+    /**
+     * Record an answer attempt for a user on a game
+     */
+    public synchronized void recordAnswer(User user, Game game, String answerText) {
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        long count = gameAnswerRepository.countByUserAndGameAndAnswerDate(user, game, today);
+        GameAnswer answer = new GameAnswer(user, game, answerText, today, (int)(count + 1));
+        gameAnswerRepository.save(answer);
+    }
+
+    /**
+     * Check if user has remaining attempts on today's game
+     * Returns: 2 = can still play, 1 = last attempt, 0 = no more attempts
+     */
+    public synchronized int getRemainingAttempts(User user, Game game) {
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        long count = gameAnswerRepository.countByUserAndGameAndAnswerDate(user, game, today);
+        if (count >= 2) {
+            return 0; // No more attempts
+        }
+        return (int)(2 - count); // Return remaining attempts
+    }
+
+    /**
+     * Get all attempts for a user on today's game
+     */
+    public synchronized List<GameAnswer> getTodayAttempts(User user, Game game) {
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        return gameAnswerRepository.findByUserAndGameAndAnswerDate(user, game, today);
     }
 
     /**

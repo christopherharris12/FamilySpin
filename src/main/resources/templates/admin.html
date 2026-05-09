@@ -211,6 +211,7 @@
             <div class="header-actions">
                 <button class="back-btn" onclick="window.location.href='/dashboard'">← Back to Game</button>
                 <button class="back-btn" id="resetBtn" style="background:#fde68a; border:1px solid #f59e0b;" onclick="resetSession()">Reset Session</button>
+                <button class="back-btn" id="resetGamesBtn" style="background:#fbbf24; border:1px solid #d97706;" onclick="resetGames()">🔄 Reset Games (3-day)</button>
                 <button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </header>
@@ -358,6 +359,20 @@
                 }
             } catch(e){
                 alert('Failed to reset session: '+e.message);
+            }
+        }
+        async function resetGames(){
+            if (!confirm('Reset games to 3-day schedule (Tue/Wed/Fri)? This will delete all current games.')) return;
+            try{
+                const res = await fetch('/admin/reset-games', { method: 'POST' });
+                if (res.ok) {
+                    alert('✓ Games reset to 3-day schedule!');
+                    window.location.reload();
+                } else {
+                    alert('Failed to reset games');
+                }
+            } catch(e){
+                alert('Failed to reset games: '+e.message);
             }
         }
         function addMemberForm(e){

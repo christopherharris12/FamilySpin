@@ -11,4 +11,10 @@ public interface GameAnswerRepository extends JpaRepository<GameAnswer, Long> {
     List<GameAnswer> findByUserAndGameAndAnswerDate(User user, Game game, LocalDate answerDate);
     
     Long countByUserAndGameAndAnswerDate(User user, Game game, LocalDate answerDate);
+
+    List<GameAnswer> findByGameAndAnswerDate(Game game, LocalDate answerDate);
+
+    List<GameAnswer> findAllByOrderByAnswerDateDesc();
+
+    List<GameAnswer> findTop200ByOrderByAnswerDateDesc();
 }

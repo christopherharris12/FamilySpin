@@ -316,6 +316,35 @@
             </div>
             <div th:if="${recentLogins == null or recentLogins.isEmpty()}" style="color:var(--muted); font-style:italic;">No recent logins</div>
         </div>
+        
+        <div class="players-section" style="margin-top:20px;">
+            <h2>📚 Recent Answers History</h2>
+            <div th:if="${recentAnswers != null and !#lists.isEmpty(recentAnswers)}">
+                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <thead>
+                        <tr style="text-align:left; border-bottom:1px solid #eee;">
+                            <th style="padding:8px 6px; color:var(--muted);">Date</th>
+                            <th style="padding:8px 6px; color:var(--muted);">Game</th>
+                            <th style="padding:8px 6px; color:var(--muted);">User</th>
+                            <th style="padding:8px 6px; color:var(--muted);">Question</th>
+                            <th style="padding:8px 6px; color:var(--muted);">Answer</th>
+                            <th style="padding:8px 6px; color:var(--muted);">Attempt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="ans : ${recentAnswers}" style="border-bottom:1px solid #fafafa;">
+                            <td style="padding:8px 6px; color:var(--muted);" th:text="${ans.answerDate}"></td>
+                            <td style="padding:8px 6px; font-weight:600; color:#1f2937;" th:text="${ans.game.name}"></td>
+                            <td style="padding:8px 6px;" th:text="${ans.user.familyMemberName}"></td>
+                            <td style="padding:8px 6px; color:var(--muted); font-style:italic;" th:text="${ans.question != null ? ans.question.question : '-'}"></td>
+                            <td style="padding:8px 6px; color:#374151;" th:text="${ans.answerText}"></td>
+                            <td style="padding:8px 6px; color:var(--muted);" th:text="${ans.attemptNumber}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${recentAnswers == null or #lists.isEmpty(recentAnswers)}" style="color:var(--muted); font-style:italic;">No answers recorded yet</div>
+        </div>
     </div>
     <script>
         async function resetSession(){

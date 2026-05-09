@@ -23,11 +23,13 @@ public class AdminController {
     private final UserRepository userRepository;
     private final GamePlayRepository gamePlayRepository;
     private final SpinService spinService;
+    private final com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository;
 
-    public AdminController(UserRepository userRepository, GamePlayRepository gamePlayRepository, SpinService spinService) {
+    public AdminController(UserRepository userRepository, GamePlayRepository gamePlayRepository, SpinService spinService, com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository) {
         this.userRepository = userRepository;
         this.gamePlayRepository = gamePlayRepository;
         this.spinService = spinService;
+        this.gameAnswerRepository = gameAnswerRepository;
     }
 
     @GetMapping
@@ -92,6 +94,14 @@ public class AdminController {
         model.addAttribute("recentLogins", spinService.getRecentLogins());
         // All members in the game
         model.addAttribute("allGameMembers", currentState.activeMembers());
+
+        // Recent answers (show most recent 200)
+        try {
+            List<com.spin.FamilySpin.model.GameAnswer> recentAnswers = gameAnswerRepository.findTop200ByOrderByAnswerDateDesc();
+            model.addAttribute("recentAnswers", recentAnswers);
+        } catch (Exception ex) {
+            model.addAttribute("recentAnswers", java.util.Collections.emptyList());
+        }
 
         return "admin";
     }

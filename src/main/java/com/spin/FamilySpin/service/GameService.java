@@ -103,10 +103,10 @@ public class GameService {
     /**
      * Record an answer attempt for a user on a game
      */
-    public synchronized void recordAnswer(User user, Game game, String answerText) {
+    public synchronized void recordAnswer(User user, Game game, String answerText, GameQuestion question) {
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
         long count = gameAnswerRepository.countByUserAndGameAndAnswerDate(user, game, today);
-        GameAnswer answer = new GameAnswer(user, game, answerText, today, (int)(count + 1));
+        GameAnswer answer = new GameAnswer(user, game, question, answerText, today, (int)(count + 1));
         gameAnswerRepository.save(answer);
     }
 

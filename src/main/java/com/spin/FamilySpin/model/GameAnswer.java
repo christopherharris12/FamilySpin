@@ -18,6 +18,10 @@ public class GameAnswer {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private GameQuestion question;
+
     @Column(name = "answer_text")
     private String answerText;
 
@@ -30,9 +34,10 @@ public class GameAnswer {
     public GameAnswer() {
     }
 
-    public GameAnswer(User user, Game game, String answerText, LocalDate answerDate, Integer attemptNumber) {
+    public GameAnswer(User user, Game game, GameQuestion question, String answerText, LocalDate answerDate, Integer attemptNumber) {
         this.user = user;
         this.game = game;
+        this.question = question;
         this.answerText = answerText;
         this.answerDate = answerDate;
         this.attemptNumber = attemptNumber;
@@ -60,6 +65,14 @@ public class GameAnswer {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public GameQuestion getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(GameQuestion question) {
+        this.question = question;
     }
 
     public String getAnswerText() {

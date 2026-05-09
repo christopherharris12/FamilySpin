@@ -114,26 +114,29 @@ public class GameController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No attempts remaining for this game today.");
         }
 
-        // Record the answer attempt
-        gameService.recordAnswer(user, game.get(), answerText);
+        // Record the answer attempt (include question reference if provided)
+        GameQuestion question = null;
+        if (questionId != null) {
+            Optional<GameQuestion> qOpt = gameQuestionRepository.findById(questionId);
+            if (qOpt.isPresent()) {
+                question = qOpt.get();
+            }
+        }
+        gameService.recordAnswer(user, game.get(), answerText, question);
 
         // Validate correctness if questionId provided
         boolean correct = false;
         String correctAnswer = null;
-        if (questionId != null) {
-            Optional<GameQuestion> qOpt = gameQuestionRepository.findById(questionId);
-            if (qOpt.isPresent()) {
-                GameQuestion q = qOpt.get();
-                correctAnswer = q.getAnswer();
-                // Normalize strings for simple comparison
-                String expected = q.getAnswer() == null ? "" : q.getAnswer().replaceAll("\\s+", "").replaceAll("[^a-zA-Z0-9:]", "").toLowerCase();
-                String given = answerText == null ? "" : answerText.replaceAll("\\s+", "").replaceAll("[^a-zA-Z0-9:]", "").toLowerCase();
-                correct = expected.equals(given);
+        if (question != null) {
+            correctAnswer = question.getAnswer();
+            // Normalize strings for simple comparison
+            String expected = question.getAnswer() == null ? "" : question.getAnswer().replaceAll("\\s+", "").replaceAll("[^a-zA-Z0-9:]", "").toLowerCase();
+            String given = answerText == null ? "" : answerText.replaceAll("\\s+", "").replaceAll("[^a-zA-Z0-9:]", "").toLowerCase();
+            correct = expected.equals(given);
 
-                if (correct) {
-                    // award points for correct answer
-                    gameService.addScore(user, game.get(), 20, gameService.getCurrentWeekNumber());
-                }
+            if (correct) {
+                // award points for correct answer
+                gameService.addScore(user, game.get(), 20, gameService.getCurrentWeekNumber());
             }
         }
 

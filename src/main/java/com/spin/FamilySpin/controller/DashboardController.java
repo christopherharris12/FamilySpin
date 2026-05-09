@@ -36,14 +36,15 @@ public class DashboardController {
 
         SpinState state = spinService.getState();
         boolean userHasSpun = spinService.hasUserSpunThisSession(user);
+        String personalSpinner = spinService.getPersonalSpinner(user);
         
         model.addAttribute("state", state);
         model.addAttribute("username", user.getUsername());
         model.addAttribute("userIsAdmin", user.isAdmin());
         model.addAttribute("userHasSpun", userHasSpun);
         model.addAttribute("friendOfTheWeek", state.friendOfTheWeek());
-        // Only show the friend display to users who have already spun this session.
-        model.addAttribute("friendOfTheWeekDisplay", userHasSpun ? state.friendOfTheWeek() : null);
+        // Show user only the person who spun them (their personal spinner), not the global friend
+        model.addAttribute("friendOfTheWeekDisplay", personalSpinner);
         model.addAttribute("dashboardMessage", state.dashboardMessage());
         model.addAttribute("sessionCompleted", state.completed());
         model.addAttribute("activeMembers", state.activeMembers());

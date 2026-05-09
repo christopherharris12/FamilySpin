@@ -162,6 +162,18 @@ public class SpinService {
         return gamePlayRepository.findByUserAndSessionNumber(user, sessionNumber).isPresent();
     }
 
+    public synchronized String getPersonalSpinner(User user) {
+        if (user == null || user.getFamilyMemberName() == null) {
+            return null;
+        }
+        // Find the GamePlay where this user (by family name) was the eliminatedMember in current session
+        return gamePlayRepository.findBySessionNumber(sessionNumber).stream()
+                .filter(gp -> isSameMemberName(gp.getEliminatedMember(), user.getFamilyMemberName()))
+                .findFirst()
+                .map(gp -> gp.getUser().getFamilyMemberName())
+                .orElse(null);
+    }
+
     public synchronized void reset() {
         activeMembers.clear();
         activeMembers.addAll(rosterMembers);

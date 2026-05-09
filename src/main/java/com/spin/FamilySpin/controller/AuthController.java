@@ -108,7 +108,7 @@ public class AuthController {
         spinService.recordLogin(user);
 
         if (user.isAdmin()) {
-            return "redirect:/admin";
+            return "redirect:/dashboard";
         }
 
         return "redirect:/dashboard";

@@ -393,7 +393,7 @@
                 <p th:text="'Week ' + ${weekNumber} + ' - ' + ${game.gameType}"></p>
             </div>
             <div class="header-right">
-                <div class="timer" id="timer">15:00</div>
+                <div class="timer" id="timer">01:00</div>
                 <button class="back-btn" onclick="window.location.href='/games'">← Back</button>
             </div>
         </header>
@@ -518,8 +518,8 @@
     </div>
 
     <script>
-        // Timer countdown
-        let timeLeft = 15 * 60;
+        // Timer countdown - 1 minute per game
+        let timeLeft = 1 * 60;
         setInterval(() => {
             timeLeft--;
             const mins = Math.floor(timeLeft / 60);
@@ -527,7 +527,7 @@
             document.getElementById('timer').innerText = 
                 String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
             
-            if (timeLeft <= 60) {
+            if (timeLeft <= 30) {
                 document.getElementById('timer').classList.add('warning');
             }
         }, 1000);

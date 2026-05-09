@@ -214,75 +214,61 @@ public class GameService {
 
     private void generateTriviaQuestions(Game game) {
         String[][] triviaData = {
-            // Community & Belonging
-            {"What does it mean to feel 'at home' in a community?", "A place where you belong and are accepted for who you are", "Community", "Proverbs 27:12 - Home is where we find refuge"},
-            {"What is the most important thing that builds trust between people?", "Honesty, consistency, and vulnerability", "Community", "Proverbs 13:3 - Guard your words carefully"},
-            {"How can you help someone feel welcomed?", "Listen to their story, show genuine interest, remember their name", "Community", "Hebrews 13:2 - Welcome strangers"},
-            {"What does it mean to truly listen to someone?", "Understand their perspective without planning your response", "Community", "James 1:19 - Be quick to listen, slow to speak"},
-            {"What is one way diversity strengthens a group?", "Different perspectives, experiences, and ideas", "Community", "1 Corinthians 12:12-13 - Many parts, one body"},
+            // Easy Fun Questions
+            {"What's your favorite food?", "Varies - it's fun!", "Fun", "Kwisi favorites!"},
+            {"What's your go-to movie genre?", "Action, Comedy, Drama, Horror - any!", "Fun", "Kwisi entertainment!"},
+            {"If you could travel anywhere, where?", "Beach, Mountains, City, Country - anywhere!", "Travel", "Kwisi adventures!"},
+            {"What's your favorite season?", "Summer, Fall, Winter, Spring", "Life", "Kwisi weather!"},
+            {"What's your guilty pleasure snack?", "Pizza, Chips, Cake, Ice cream - anything!", "Fun", "Kwisi treats!"},
             
-            // Real Life Challenges
-            {"What is the biggest challenge university students face today?", "Mental health, loneliness, financial pressure, or academic stress", "Real Life", "Philippians 4:6-7 - Cast your cares on God"},
-            {"How do you handle a conflict with someone you care about?", "Listen, apologize if wrong, seek to understand, find compromise", "Real Life", "Matthew 5:24 - Be reconciled with your brother"},
-            {"What does it mean to have financial responsibility?", "Budgeting, saving, not overspending, understanding your limits", "Real Life", "Proverbs 21:5 - The plans of the diligent lead to profit"},
-            {"What is the most important skill for your career future?", "Communication, problem-solving, adaptability, or continuous learning", "Career", "Proverbs 22:29 - Do you see someone skilled in their work"},
-            {"How do you maintain mental health during stressful times?", "Exercise, sleep, therapy, talking to friends, or spiritual practices", "Real Life", "Philippians 4:8 - Think on these things"},
+            // Popular & Easy
+            {"Who's your celebrity crush?", "Anyone famous you like!", "Pop Culture", "Kwisi crush!"},
+            {"What's the best day of the week?", "Friday, Saturday, Sunday!", "Life", "Kwisi days!"},
+            {"Coffee or Tea?", "Everyone has an opinion!", "Lifestyle", "Kwisi drinks!"},
+            {"What time do you usually wake up?", "Early bird or night owl?", "Life", "Kwisi sleep!"},
+            {"What's your favorite music genre?", "Hip-hop, Pop, Rock, R&B, Reggae!", "Music", "Kwisi vibes!"},
             
-            // Personal Growth & Resilience
-            {"What role does failure play in personal growth?", "It teaches resilience, reveals weaknesses, and builds character", "Personal Growth", "Romans 5:3-4 - Suffering produces perseverance"},
-            {"What is true friendship based on?", "Trust, honesty, vulnerability, and mutual support through good and bad", "Relationships", "Proverbs 27:17 - Iron sharpens iron"},
-            {"How do you decide what matters most in your life?", "Values, long-term goals, relationships, and what brings genuine fulfillment", "Real Life", "Colossians 3:15 - Let peace guide your decisions"},
-            {"What does it mean to be authentic?", "Being true to yourself, not pretending or wearing masks", "Personal Growth", "Proverbs 12:17 - The honest witness tells the truth"},
-            {"How do you recover from disappointment?", "Allow yourself to feel it, seek support, find meaning in it", "Personal Growth", "2 Corinthians 4:8-9 - Pressed but not crushed"},
+            // Relatable & Easy
+            {"What's your superpower?", "Making people laugh, listening, cooking!", "Fun", "Kwisi power!"},
+            {"If you were an animal, what would you be?", "Dog, Cat, Lion, Eagle!", "Fun", "Kwisi animal!"},
+            {"What's your favorite thing about family?", "The laughter, the love, the memories!", "Family", "Kwisi love!"},
+            {"What sport do you like to play or watch?", "Football, Basketball, Tennis, Swimming!", "Sports", "Kwisi games!"},
+            {"What's your favorite dessert?", "Cake, Ice cream, Chocolate, Fruit!", "Food", "Kwisi sweet!"},
             
-            // Relationships & Connection
-            {"What makes a friendship last?", "Effort, honesty, forgiveness, and consistent support", "Relationships", "Proverbs 17:17 - A friend loves at all times"},
-            {"How do you show someone they matter to you?", "Remember details, celebrate wins, show up in hard times", "Relationships", "1 Thessalonians 5:11 - Encourage one another"},
-            {"What is the hardest part of being vulnerable?", "Fear of rejection, judgment, or being hurt", "Relationships", "1 Peter 5:7 - Cast all your cares on Him"},
-            {"How do you help a friend who is struggling?", "Listen without judging, offer practical help, just be present", "Relationships", "Galatians 6:2 - Carry each other's burdens"},
-            {"What does forgiveness really mean?", "Letting go of anger and choosing to move forward", "Relationships", "Colossians 3:13 - Forgive as the Lord forgave you"},
+            // Light & Happy
+            {"What makes you laugh the most?", "Jokes, Friends, Family, Movies!", "Joy", "Kwisi laughter!"},
+            {"What's your go-to karaoke song?", "Any song you love to sing!", "Music", "Kwisi singing!"},
+            {"Would you rather: Beach or Mountains?", "Pick your adventure!", "Travel", "Kwisi nature!"},
+            {"What's your favorite emoji?", "😂 😍 🔥 💯 - any one!", "Fun", "Kwisi express!"},
+            {"What's the best time of day?", "Morning, Afternoon, Evening, Night!", "Life", "Kwisi time!"},
             
-            // Social & Cultural
-            {"What is one way social media affects real relationships?", "Can create comparison, surface-level connection, or distance from genuine interaction", "Real Life", "Psalm 26:4 - I do not sit with the deceitful"},
-            {"How does culture shape who we are?", "Values, beliefs, traditions, language, worldview", "Culture", "Psalm 139:14 - I am fearfully and wonderfully made"},
-            {"What does it mean to be proud of your heritage?", "Understanding your roots, honoring traditions, sharing stories", "Culture", "Deuteronomy 6:6 - These commandments are upon your hearts"},
-            {"How can you bridge cultural differences?", "Listen, ask questions, try new things, show respect", "Culture", "1 Peter 3:8 - Live in harmony with one another"},
-            {"What is the value of storytelling in a community?", "Connects people, preserves history, builds understanding", "Community", "Psalm 78:4 - Tell to the coming generation"},
+            // Simple & Fun
+            {"What's your favorite color?", "Red, Blue, Green, Purple - anything!", "Life", "Kwisi colors!"},
+            {"Do you prefer hot or cold weather?", "Summer heat or winter cool?", "Life", "Kwisi weather!"},
+            {"What's your favorite hobby?", "Gaming, Reading, Sports, Art!", "Life", "Kwisi passion!"},
+            {"Who's your favorite family member?", "Mom, Dad, Sibling, Cousin!", "Family", "Kwisi person!"},
+            {"What's your favorite app?", "WhatsApp, TikTok, Instagram, YouTube!", "Tech", "Kwisi app!"},
             
-            // Purpose & Direction
-            {"What helps you discover your purpose?", "Self-reflection, trying new things, listening to others", "Personal Growth", "Jeremiah 29:11 - Plans for good, not harm"},
-            {"How do you know when you're on the right path?", "Inner peace, alignment with values, positive impact", "Personal Growth", "Proverbs 16:9 - The Lord establishes our steps"},
-            {"What does success mean to you?", "Making a difference, meaningful relationships, personal fulfillment", "Real Life", "1 Timothy 6:6 - Godliness with contentment is great gain"},
-            {"How do you balance ambition with contentment?", "Set goals but find joy in the present", "Personal Growth", "Philippians 4:11 - I have learned to be content"},
-            {"What is one dream you're afraid to pursue?", "Common answer - many have similar fears", "Real Life", "Joshua 1:9 - Be strong and courageous"},
+            // Popular Culture
+            {"Favorite superhero?", "Batman, Superman, Spider-Man, Ironman!", "Pop Culture", "Kwisi hero!"},
+            {"Cats or Dogs?", "A classic question!", "Animals", "Kwisi pet!"},
+            {"What's your favorite TV show?", "Game of Thrones, Friends, Breaking Bad!", "TV", "Kwisi show!"},
+            {"Would you rather: Fly or Invisibility?", "Pick your superpower!", "Fun", "Kwisi power!"},
+            {"What's your favorite holiday?", "Christmas, New Year, Birthday!", "Holidays", "Kwisi celebration!"},
             
-            // Family & Home
-            {"What does 'home' mean beyond just a place?", "Belonging, safety, acceptance, unconditional support", "Family", "Proverbs 14:1 - The wise woman builds her house"},
-            {"How do families stay connected across distance?", "Regular communication, shared experiences, intentional effort", "Family", "Philippians 1:3-4 - I thank my God and remember you"},
-            {"What is one valuable lesson from your family?", "Varies by person - rich diversity of answers", "Family", "Proverbs 22:6 - Train a child in the way they should go"},
-            {"How do you handle differences with family members?", "Respect, communication, finding common ground", "Family", "Proverbs 15:1 - A gentle answer turns away wrath"},
-            {"What role does loyalty play in family?", "Foundation of trust, showing up, supporting each other", "Family", "Ruth 3:11 - All the people know you are a woman of worth"},
+            // Quick & Easy
+            {"Breakfast: Sweet or Savory?", "Pancakes or Eggs?", "Food", "Kwisi morning!"},
+            {"Prefer: Phone or Laptop?", "Which tech do you use most?", "Tech", "Kwisi device!"},
+            {"Right-handed or Left-handed?", "Which side do you write with?", "Life", "Kwisi hand!"},
+            {"Your favorite drink?", "Water, Juice, Soda, Coffee!", "Drinks", "Kwisi sip!"},
+            {"Night owl or Early bird?", "When are you most awake?", "Life", "Kwisi sleep!"},
             
-            // Service & Impact
-            {"How can you make a positive impact in your community?", "Listen, help, volunteer, share skills", "Service", "Matthew 5:16 - Let your light shine before others"},
-            {"What does it mean to serve others?", "Putting their needs before your own, with a willing heart", "Service", "Galatians 5:13 - Serve one another in love"},
-            {"How do you show compassion to someone suffering?", "Listen, validate, offer practical help, pray", "Service", "1 Thessalonians 5:14 - Encourage the timid, help the weak"},
-            {"What is the difference between pity and compassion?", "Compassion moves you to action, pity is passive", "Service", "1 John 3:17 - If you see someone in need, help them"},
-            {"How does gratitude change your perspective?", "Shifts focus from what you lack to what you have", "Personal Growth", "1 Thessalonians 5:18 - Give thanks in all circumstances"},
-            
-            // Wisdom & Learning
-            {"What is the most valuable thing you've learned from someone else?", "Varies - wisdom comes from many sources", "Learning", "Proverbs 1:5 - Let the wise listen and add to their learning"},
-            {"How do you know when you need to ask for help?", "When you're stuck, exhausted, or out of your depth", "Real Life", "Proverbs 15:22 - Plans fail for lack of counsel"},
-            {"What does it mean to have a growth mindset?", "Believing you can improve through effort and learning", "Personal Growth", "Philippians 4:8 - Whatever is noble, think about such things"},
-            {"How do you respond when you don't know the answer?", "Ask, admit, research, learn", "Learning", "Proverbs 12:15 - The wise listen and add to their learning"},
-            {"What is the connection between humility and wisdom?", "Humility opens you to learning from others", "Wisdom", "Proverbs 11:2 - When pride comes, then comes disgrace"},
-            
-            // Joy & Celebration
-            {"What brings you genuine joy?", "Relationships, accomplishments, experiences, laughter", "Joy", "Psalm 16:11 - Joy in God's presence"},
-            {"How do you celebrate someone else's success?", "Genuinely, enthusiastically, with your presence", "Relationships", "Romans 12:15 - Rejoice with those who rejoice"},
-            {"What is one simple pleasure you often overlook?", "Varies - encourages reflection on gratitude", "Joy", "Proverbs 17:22 - A joyful heart is good medicine"},
-            {"How does laughter strengthen relationships?", "Creates connection, relieves tension, builds memories", "Relationships", "Proverbs 31:25 - She laughs at the days to come"},
-            {"What moments make you feel most alive?", "Varies - celebration of individual passion and purpose", "Joy", "John 10:10 - I have come that you may have life to the full"}
+            // Relatable Stories
+            {"What's something funny that happened to you?", "Share a fun memory!", "Memories", "Kwisi funny!"},
+            {"What skill would you like to learn?", "Dancing, Cooking, Drawing!", "Growth", "Kwisi learn!"},
+            {"Your biggest achievement?", "Anything you're proud of!", "Achievement", "Kwisi pride!"},
+            {"What's your dream job?", "Doctor, Teacher, Musician, CEO!", "Dreams", "Kwisi work!"},
+            {"Best place you've visited?", "Any country or city!", "Travel", "Kwisi explore!"}
         };
 
         for (String[] data : triviaData) {
@@ -293,47 +279,47 @@ public class GameService {
 
     private void generateDareChallenges(Game game) {
         String[][] dareData = {
-            // Emotional Vulnerability
-            {"Share your biggest academic or career fear", "DARE", "Philippians 4:6 - Do not be anxious, present your requests to God", "Kwisi authenticity!"},
-            {"Tell someone a mistake you made and what you learned", "DARE", "Proverbs 12:1 - Whoever loves discipline loves knowledge", "Kwisi growth!"},
-            {"Share how you've struggled with mental health or stress", "DARE", "2 Corinthians 12:9 - My grace is sufficient for you", "Kwisi vulnerability!"},
-            {"Give someone advice based on your real-life experience", "DARE", "Proverbs 27:12 - The prudent see danger and take refuge", "Kwisi wisdom!"},
-            {"Share a time you felt lonely or out of place", "DARE", "Psalm 23:4 - You are with me in the valley", "Kwisi support!"},
+            // Fun & Light
+            {"Make a funny face for 10 seconds", "DARE", "Kwisi vibes!", "Kwisi fun!"},
+            {"Do your best dance move", "DARE", "Kwisi dancing!", "Kwisi rhythm!"},
+            {"Sing a line from your favorite song", "DARE", "Kwisi singing!", "Kwisi voice!"},
+            {"Tell a clean joke to make people laugh", "DARE", "Kwisi laughter!", "Kwisi humor!"},
+            {"Do 5 push-ups or jumping jacks", "DARE", "Kwisi exercise!", "Kwisi strength!"},
             
-            // Personal Sharing
-            {"Tell a story from your childhood that shaped you", "DARE", "Proverbs 22:6 - Train a child in the way they should go", "Kwisi origins!"},
-            {"Share your hidden talent or skill nobody knows about", "DARE", "1 Peter 4:10 - Each of you should use your gifts", "Kwisi discovery!"},
-            {"Tell us what you're most proud of about yourself", "DARE", "Psalm 139:14 - I am fearfully and wonderfully made", "Kwisi pride!"},
-            {"Share something you've been wanting to say but haven't", "DARE", "Ephesians 4:15 - Speak the truth in love", "Kwisi courage!"},
-            {"Tell someone something you admire about them", "DARE", "Proverbs 16:24 - Gracious words are like honey", "Kwisi affirmation!"},
+            // Silly & Playful
+            {"Speak in an accent for 1 minute", "DARE", "Kwisi accent!", "Kwisi drama!"},
+            {"Walk like your favorite animal", "DARE", "Kwisi animal!", "Kwisi moves!"},
+            {"Give the person next to you a compliment", "DARE", "Kwisi love!", "Kwisi kindness!"},
+            {"Do an impression of someone famous", "DARE", "Kwisi impression!", "Kwisi acting!"},
+            {"Pretend to be a robot for 30 seconds", "DARE", "Kwisi robot!", "Kwisi weird!"},
             
-            // Challenging Growth
-            {"Challenge someone to pursue a goal they've been avoiding", "DARE", "Proverbs 31:8 - Speak up for those who have no voice", "Kwisi encouragement!"},
-            {"Share what you would do if fear wasn't a factor", "DARE", "Joshua 1:9 - Be strong and courageous", "Kwisi boldness!"},
-            {"Tell someone how they've impacted your life positively", "DARE", "1 Thessalonians 5:11 - Encourage one another", "Kwisi impact!"},
-            {"Share a dream you're working toward", "DARE", "Proverbs 29:18 - Where there is no vision, the people perish", "Kwisi vision!"},
-            {"Tell us about a time you changed your mind about someone", "DARE", "Proverbs 14:15 - The simple believe anything, but the prudent give thought", "Kwisi reflection!"},
+            // Interactive
+            {"High-five everyone in the room", "DARE", "Kwisi connection!", "Kwisi energy!"},
+            {"Get 3 people to smile at you", "DARE", "Kwisi charm!", "Kwisi smile!"},
+            {"Tell someone why they're awesome", "DARE", "Kwisi love!", "Kwisi appreciation!"},
+            {"Give someone a funny nickname", "DARE", "Kwisi fun!", "Kwisi laughter!"},
+            {"Ask someone about their favorite memory", "DARE", "Kwisi listen!", "Kwisi share!"},
             
-            // Connection Building
-            {"Share a time someone's kindness changed your day", "DARE", "Ephesians 4:32 - Be kind to one another", "Kwisi gratitude!"},
-            {"Tell someone why you value their friendship", "DARE", "Proverbs 27:17 - Iron sharpens iron", "Kwisi bonds!"},
-            {"Share what 'home' means to you", "DARE", "John 14:1-3 - I go to prepare a place for you", "Kwisi belonging!"},
-            {"Tell us about a mentor or person who inspired you", "DARE", "Proverbs 27:12 - The wise see danger and take refuge", "Kwisi wisdom!"},
-            {"Share a moment when you felt truly accepted", "DARE", "Romans 15:7 - Accept one another as Christ accepted you", "Kwisi acceptance!"},
+            // Quick Laughs
+            {"Make your silliest noise for 5 seconds", "DARE", "Kwisi noise!", "Kwisi fun!"},
+            {"Do the moonwalk (or try to!)", "DARE", "Kwisi dance!", "Kwisi moves!"},
+            {"Tell 3 things you're grateful for", "DARE", "Kwisi grateful!", "Kwisi thanks!"},
+            {"Act like a celebrity for 1 minute", "DARE", "Kwisi famous!", "Kwisi acting!"},
+            {"Describe your day using only one word repeated", "DARE", "Kwisi weird!", "Kwisi fun!"},
             
-            // Brave Acts
-            {"Give a genuine apology if you've hurt someone", "DARE", "Matthew 5:24 - Be reconciled with your brother", "Kwisi peace!"},
-            {"Offer forgiveness to someone who wronged you", "DARE", "Colossians 3:13 - Forgive as the Lord forgave you", "Kwisi release!"},
-            {"Start a 1-on-1 coffee date with someone new", "DARE", "Hebrews 13:2 - Welcome strangers", "Kwisi connection!"},
-            {"Share a compliment with three people here", "DARE", "Proverbs 16:24 - Gracious words are like honey", "Kwisi abundance!"},
-            {"Tell someone exactly how you feel in one sentence", "DARE", "Ephesians 4:15 - Speak the truth in love", "Kwisi honesty!"},
+            // Bonding
+            {"Share your best friend memory", "DARE", "Kwisi memories!", "Kwisi connection!"},
+            {"Teach someone a dance move", "DARE", "Kwisi dancing!", "Kwisi teaching!"},
+            {"Make everyone laugh within 30 seconds", "DARE", "Kwisi comedy!", "Kwisi laughter!"},
+            {"Give 5 high-fives to different people", "DARE", "Kwisi energy!", "Kwisi connection!"},
+            {"Tell your funniest story", "DARE", "Kwisi story!", "Kwisi fun!"},
             
-            // Deep Reflection
-            {"Share what you're grateful for despite challenges", "DARE", "1 Thessalonians 5:18 - Give thanks in all circumstances", "Kwisi perspective!"},
-            {"Tell us about a time you felt God's presence", "DARE", "Psalm 139:7-10 - Nowhere can I go from your Spirit", "Kwisi faith!"},
-            {"Share what you wish people understood about you", "DARE", "1 John 4:7 - Love one another", "Kwisi understanding!"},
-            {"Tell someone how they helped you become stronger", "DARE", "2 Timothy 1:7 - God has not given us a spirit of fear", "Kwisi strength!"},
-            {"Share a moment when community meant everything", "DARE", "Ecclesiastes 4:9 - Two are better than one", "Kwisi belonging!"}
+            // Personal but Light
+            {"Share your go-to karaoke song", "DARE", "Kwisi music!", "Kwisi singing!"},
+            {"Do your best super hero pose and say your name", "DARE", "Kwisi power!", "Kwisi fun!"},
+            {"Teach us a new dance you know", "DARE", "Kwisi dancing!", "Kwisi teaching!"},
+            {"Tell us about your ideal vacation", "DARE", "Kwisi travel!", "Kwisi dreams!"},
+            {"Show us your coolest talent", "DARE", "Kwisi talent!", "Kwisi amazing!"}
         };
 
         for (String[] data : dareData) {
@@ -344,40 +330,40 @@ public class GameService {
 
     private void generateCharadesChallenges(Game game) {
         String[][] charadesData = {
-            // Student Life
-            {"Cramming for an exam the night before", "CHARADES", "Proverbs 21:5 - The plans of the diligent lead to profit", "Kwisi reality!"},
-            {"Getting rejected from your dream job", "CHARADES", "Romans 5:3 - We also glory in our sufferings", "Kwisi resilience!"},
-            {"Finally understanding a difficult concept", "CHARADES", "Proverbs 18:15 - The heart of the discerning acquires knowledge", "Kwisi breakthrough!"},
-            {"Pretending to be fine when you're struggling", "CHARADES", "Matthew 11:28 - Come to me all who are weary", "Kwisi honesty!"},
-            {"Realizing you made a wrong choice", "CHARADES", "Proverbs 14:12 - There is a way that appears right but leads to death", "Kwisi correction!"},
+            // Simple & Fun Actions
+            {"Sleeping", "CHARADES", "Kwisi rest!", "Kwisi action!"},
+            {"Brushing teeth", "CHARADES", "Kwisi morning!", "Kwisi action!"},
+            {"Dancing", "CHARADES", "Kwisi rhythm!", "Kwisi action!"},
+            {"Eating pizza", "CHARADES", "Kwisi delicious!", "Kwisi action!"},
+            {"Swimming", "CHARADES", "Kwisi water!", "Kwisi action!"},
             
-            // Emotional Moments
-            {"Supporting a friend through a difficult time", "CHARADES", "1 Thessalonians 5:11 - Encourage one another", "Kwisi presence!"},
-            {"Stepping out of your comfort zone for the first time", "CHARADES", "Joshua 1:9 - Be strong and courageous", "Kwisi courage!"},
-            {"Discovering a hidden talent within yourself", "CHARADES", "1 Peter 4:10 - Each of you should use your gifts", "Kwisi discovery!"},
-            {"Feeling lonely in a crowded room", "CHARADES", "Psalm 25:16 - Turn to me and be gracious", "Kwisi connection!"},
-            {"Realizing you've grown as a person", "CHARADES", "2 Corinthians 5:17 - All things become new", "Kwisi transformation!"},
+            // Common Things
+            {"Playing football", "CHARADES", "Kwisi sports!", "Kwisi action!"},
+            {"Driving a car", "CHARADES", "Kwisi travel!", "Kwisi action!"},
+            {"Cooking", "CHARADES", "Kwisi food!", "Kwisi action!"},
+            {"Reading a book", "CHARADES", "Kwisi learn!", "Kwisi action!"},
+            {"Watching TV", "CHARADES", "Kwisi relax!", "Kwisi action!"},
             
-            // Relationship Moments
-            {"Reconciling with someone after conflict", "CHARADES", "Matthew 5:24 - Be reconciled with your brother", "Kwisi peace!"},
-            {"Meeting someone who becomes your best friend", "CHARADES", "Proverbs 13:20 - Walk with the wise", "Kwisi destiny!"},
-            {"Forgiving someone who hurt you deeply", "CHARADES", "Colossians 3:13 - Forgive as the Lord forgave", "Kwisi grace!"},
-            {"Celebrating a loved one's success", "CHARADES", "Romans 12:15 - Rejoice with those who rejoice", "Kwisi joy!"},
-            {"Finally asking someone for help", "CHARADES", "Proverbs 15:22 - Plans fail for lack of counsel", "Kwisi humility!"},
+            // Daily Life
+            {"Taking a shower", "CHARADES", "Kwisi clean!", "Kwisi action!"},
+            {"Riding a bike", "CHARADES", "Kwisi fun!", "Kwisi action!"},
+            {"Playing video games", "CHARADES", "Kwisi gaming!", "Kwisi action!"},
+            {"Laughing at a joke", "CHARADES", "Kwisi funny!", "Kwisi action!"},
+            {"Running away scared", "CHARADES", "Kwisi funny!", "Kwisi action!"},
             
-            // Personal Growth
-            {"Overcoming a fear you've had for years", "CHARADES", "2 Timothy 1:7 - God has not given us a spirit of fear", "Kwisi strength!"},
-            {"Learning from your biggest mistake", "CHARADES", "Proverbs 12:1 - Whoever loves discipline loves knowledge", "Kwisi wisdom!"},
-            {"Finding your life's purpose", "CHARADES", "Jeremiah 29:11 - I have plans for you, plans for good", "Kwisi direction!"},
-            {"Being vulnerable and getting accepted anyway", "CHARADES", "1 John 4:7 - Love one another", "Kwisi belonging!"},
-            {"Letting go of something that no longer serves you", "CHARADES", "Philippians 3:13 - Forget what is behind, press on", "Kwisi release!"},
+            // Easy Emotions
+            {"Very angry", "CHARADES", "Kwisi emotions!", "Kwisi action!"},
+            {"Crying", "CHARADES", "Kwisi sad!", "Kwisi action!"},
+            {"Being cold", "CHARADES", "Kwisi brr!", "Kwisi action!"},
+            {"Being hot", "CHARADES", "Kwisi hot!", "Kwisi action!"},
+            {"Tired and sleepy", "CHARADES", "Kwisi nap!", "Kwisi action!"},
             
-            // Community & Belonging
-            {"Finding your place in a new community", "CHARADES", "Proverbs 27:12 - The wise see danger and take refuge", "Kwisi home!"},
-            {"Experiencing unexpected kindness", "CHARADES", "Ephesians 4:32 - Be kind to one another", "Kwisi grace!"},
-            {"Being truly heard and understood", "CHARADES", "James 1:19 - Be quick to listen", "Kwisi validation!"},
-            {"Sharing your authentic self", "CHARADES", "Proverbs 12:17 - The honest witness tells the truth", "Kwisi authenticity!"},
-            {"Finding strength in your community", "CHARADES", "Ecclesiastes 4:9 - Two are better than one", "Kwisi unity!"}
+            // Popular Things
+            {"Superhero flying", "CHARADES", "Kwisi power!", "Kwisi action!"},
+            {"Robot walking", "CHARADES", "Kwisi mechanical!", "Kwisi action!"},
+            {"Zombie walking", "CHARADES", "Kwisi scary!", "Kwisi action!"},
+            {"Baby crawling", "CHARADES", "Kwisi cute!", "Kwisi action!"},
+            {"Old person walking", "CHARADES", "Kwisi slow!", "Kwisi action!"}
         };
 
         for (String[] data : charadesData) {
@@ -388,54 +374,47 @@ public class GameService {
 
     private void generateWordChallenges(Game game) {
         String[][] wordData = {
-            // Life Challenges
-            {"Uncertainty", "WORD", "Proverbs 3:5-6 - Trust in the Lord with all your heart", "Kwisi growth!"},
-            {"Exhaustion", "WORD", "Matthew 11:28 - Come to me and I will give you rest", "Kwisi rest!"},
-            {"Transformation", "WORD", "2 Corinthians 5:17 - If anyone is in Christ, they are new", "Kwisi renewal!"},
-            {"Courage", "WORD", "Deuteronomy 31:6 - Be strong and courageous", "Kwisi strength!"},
-            {"Purpose", "WORD", "Jeremiah 29:11 - I have plans for you, plans for good", "Kwisi direction!"},
+            // Common Words
+            {"Apple", "WORD", "Kwisi fruit!", "Kwisi easy!"},
+            {"Family", "WORD", "Kwisi love!", "Kwisi ours!"},
+            {"Love", "WORD", "Kwisi heart!", "Kwisi feeling!"},
+            {"Joy", "WORD", "Kwisi happy!", "Kwisi vibes!"},
+            {"Hope", "WORD", "Kwisi future!", "Kwisi dreams!"},
             
-            // Character & Values
-            {"Resilience", "WORD", "James 1:2-3 - Consider it joy to face trials", "Kwisi perseverance!"},
-            {"Authenticity", "WORD", "Proverbs 12:17 - The honest witness tells the truth", "Kwisi real!"},
-            {"Balance", "WORD", "Ecclesiastes 3:1 - There is a time for everything", "Kwisi harmony!"},
-            {"Growth", "WORD", "2 Peter 3:18 - Grow in the grace and knowledge", "Kwisi development!"},
-            {"Wisdom", "WORD", "Proverbs 1:5 - Let the wise listen and add to learning", "Kwisi insight!"},
+            // Easy Starting Words
+            {"Music", "WORD", "Kwisi sound!", "Kwisi beat!"},
+            {"Laughter", "WORD", "Kwisi funny!", "Kwisi smile!"},
+            {"Friend", "WORD", "Kwisi people!", "Kwisi bond!"},
+            {"Peace", "WORD", "Kwisi calm!", "Kwisi rest!"},
+            {"Dance", "WORD", "Kwisi move!", "Kwisi fun!"},
             
-            // Relationships
-            {"Connection", "WORD", "1 Thessalonians 5:11 - Encourage one another", "Kwisi bonds!"},
-            {"Forgiveness", "WORD", "Colossians 3:13 - Forgive as the Lord forgave you", "Kwisi peace!"},
-            {"Vulnerability", "WORD", "2 Corinthians 12:9 - My grace is sufficient", "Kwisi openness!"},
-            {"Belonging", "WORD", "Romans 12:5 - In Christ we are all one body", "Kwisi unity!"},
-            {"Compassion", "WORD", "1 John 3:17 - If you see someone in need, help", "Kwisi care!"},
+            // Fun Objects
+            {"Pizza", "WORD", "Kwisi food!", "Kwisi yum!"},
+            {"Movie", "WORD", "Kwisi watch!", "Kwisi entertainment!"},
+            {"Game", "WORD", "Kwisi fun!", "Kwisi play!"},
+            {"Beach", "WORD", "Kwisi sand!", "Kwisi water!"},
+            {"Party", "WORD", "Kwisi celebration!", "Kwisi people!"},
             
-            // Spiritual
-            {"Faith", "WORD", "Hebrews 11:1 - Faith is confidence in what we hope for", "Kwisi belief!"},
-            {"Grace", "WORD", "Ephesians 2:8 - By grace you have been saved", "Kwisi mercy!"},
-            {"Hope", "WORD", "Romans 15:13 - May the God of hope fill you", "Kwisi future!"},
-            {"Joy", "WORD", "Nehemiah 8:10 - The joy of the Lord is your strength", "Kwisi celebration!"},
-            {"Peace", "WORD", "Philippians 4:7 - The peace of God guards your heart", "Kwisi calm!"},
+            // Simple Verbs
+            {"Running", "WORD", "Kwisi fast!", "Kwisi move!"},
+            {"Cooking", "WORD", "Kwisi food!", "Kwisi yum!"},
+            {"Singing", "WORD", "Kwisi voice!", "Kwisi music!"},
+            {"Playing", "WORD", "Kwisi fun!", "Kwisi games!"},
+            {"Sleeping", "WORD", "Kwisi rest!", "Kwisi dream!"},
             
-            // Community
-            {"Home", "WORD", "Proverbs 14:1 - The wise woman builds her house", "Kwisi belonging!"},
-            {"Family", "WORD", "Psalm 68:6 - God sets the lonely in families", "Kwisi kinship!"},
-            {"Community", "WORD", "Acts 2:44 - All believers were together", "Kwisi togetherness!"},
-            {"Service", "WORD", "Galatians 5:13 - Serve one another in love", "Kwisi giving!"},
-            {"Leadership", "WORD", "1 Peter 5:2-3 - Be a shepherd of God's flock", "Kwisi influence!"},
-            
-            // Personal Development
-            {"Excellence", "WORD", "Colossians 3:17 - Do it all in the name of the Lord", "Kwisi quality!"},
-            {"Gratitude", "WORD", "1 Thessalonians 5:18 - Give thanks in all circumstances", "Kwisi appreciation!"},
-            {"Humility", "WORD", "Proverbs 11:2 - Humility comes before honor", "Kwisi modesty!"},
-            {"Integrity", "WORD", "Proverbs 10:9 - The righteous person walks securely", "Kwisi honesty!"},
-            {"Patience", "WORD", "Proverbs 14:29 - The patient person has great understanding", "Kwisi endurance!"},
+            // Nature
+            {"Tree", "WORD", "Kwisi green!", "Kwisi nature!"},
+            {"Fire", "WORD", "Kwisi hot!", "Kwisi warm!"},
+            {"Water", "WORD", "Kwisi wet!", "Kwisi drink!"},
+            {"Rain", "WORD", "Kwisi drops!", "Kwisi weather!"},
+            {"Sun", "WORD", "Kwisi bright!", "Kwisi warm!"},
             
             // Emotions
-            {"Hope", "WORD", "Psalm 42:11 - Why are you downcast, O my soul", "Kwisi optimism!"},
-            {"Courage", "WORD", "Joshua 1:9 - Be strong and courageous", "Kwisi boldness!"},
-            {"Love", "WORD", "1 John 4:7-8 - We love because we are loved", "Kwisi affection!"},
-            {"Joy", "WORD", "Psalm 16:11 - You fill me with joy", "Kwisi happiness!"},
-            {"Peace", "WORD", "John 14:27 - My peace I give to you", "Kwisi serenity!"}
+            {"Happy", "WORD", "Kwisi smile!", "Kwisi feel!"},
+            {"Excited", "WORD", "Kwisi energy!", "Kwisi yes!"},
+            {"Brave", "WORD", "Kwisi strong!", "Kwisi courage!"},
+            {"Silly", "WORD", "Kwisi funny!", "Kwisi laugh!"},
+            {"Kind", "WORD", "Kwisi care!", "Kwisi love!"}
         };
 
         for (String[] data : wordData) {
@@ -446,47 +425,47 @@ public class GameService {
 
     private void generateQuestionsChallenges(Game game) {
         String[][] questionData = {
-            // Deep Personal Moments
-            {"Something you desperately needed but was afraid to ask for", "QUESTION", "Philippians 4:6 - Present your requests to God", "Kwisi vulnerability!"},
-            {"A difficult decision that changed the course of your life", "QUESTION", "Proverbs 16:9 - The Lord establishes the steps of the godly", "Kwisi choice!"},
-            {"A time you had to start over from scratch", "QUESTION", "Lamentations 3:22-23 - His mercies are new every morning", "Kwisi beginning!"},
-            {"Something you gave up to become who you are today", "QUESTION", "Matthew 16:25 - Whoever loses their life for me will find it", "Kwisi sacrifice!"},
-            {"A moment when you realized your strength", "QUESTION", "Philippians 4:13 - I can do all things through Christ", "Kwisi power!"},
+            // Animals
+            {"A dog", "QUESTION", "Kwisi animal!", "Kwisi guess!"},
+            {"A cat", "QUESTION", "Kwisi animal!", "Kwisi guess!"},
+            {"A lion", "QUESTION", "Kwisi animal!", "Kwisi guess!"},
+            {"A bird", "QUESTION", "Kwisi animal!", "Kwisi guess!"},
+            {"A fish", "QUESTION", "Kwisi animal!", "Kwisi guess!"},
             
-            // Growth & Learning
-            {"Someone who believed in you when you didn't believe in yourself", "QUESTION", "Proverbs 27:12 - The prudent see danger and take refuge", "Kwisi gratitude!"},
-            {"A lesson you learned the hard way", "QUESTION", "Proverbs 12:1 - Whoever loves discipline loves knowledge", "Kwisi wisdom!"},
-            {"A mistake that became your greatest teacher", "QUESTION", "Romans 5:3 - Suffering produces perseverance", "Kwisi growth!"},
-            {"A time you had to forgive yourself", "QUESTION", "1 John 1:9 - If we confess our sins, He forgives", "Kwisi release!"},
-            {"Something you wish you'd known earlier in life", "QUESTION", "Proverbs 20:5 - The purposes of a person's heart are deep waters", "Kwisi insight!"},
+            // Foods
+            {"Pizza", "QUESTION", "Kwisi food!", "Kwisi yum!"},
+            {"Ice cream", "QUESTION", "Kwisi food!", "Kwisi yum!"},
+            {"Chocolate", "QUESTION", "Kwisi food!", "Kwisi yum!"},
+            {"Chicken", "QUESTION", "Kwisi food!", "Kwisi yum!"},
+            {"Banana", "QUESTION", "Kwisi food!", "Kwisi yum!"},
             
-            // Community & Connection
-            {"A moment when community meant everything", "QUESTION", "Ecclesiastes 4:9 - Two are better than one", "Kwisi belonging!"},
-            {"Someone whose presence changed everything for you", "QUESTION", "Proverbs 27:17 - Iron sharpens iron", "Kwisi impact!"},
-            {"A time when you felt truly seen and understood", "QUESTION", "1 John 4:7 - Let us love one another", "Kwisi validation!"},
-            {"A friendship that surprised you in the best way", "QUESTION", "Proverbs 17:17 - A friend loves at all times", "Kwisi connection!"},
-            {"Something you learned from someone unexpected", "QUESTION", "Proverbs 1:5 - Let the wise listen and add to learning", "Kwisi openness!"},
+            // Objects
+            {"A telephone", "QUESTION", "Kwisi thing!", "Kwisi guess!"},
+            {"A car", "QUESTION", "Kwisi thing!", "Kwisi guess!"},
+            {"A book", "QUESTION", "Kwisi thing!", "Kwisi guess!"},
+            {"A TV", "QUESTION", "Kwisi thing!", "Kwisi guess!"},
+            {"A bicycle", "QUESTION", "Kwisi thing!", "Kwisi guess!"},
             
-            // Overcoming Challenges
-            {"Your biggest fear and how you're facing it", "QUESTION", "Joshua 1:9 - Be strong and courageous", "Kwisi courage!"},
-            {"A time you felt completely overwhelmed but pushed through", "QUESTION", "2 Corinthians 4:8-9 - Pressed but not crushed", "Kwisi resilience!"},
-            {"Something everyone thinks is easy but is hard for you", "QUESTION", "2 Corinthians 12:9 - My grace is sufficient for you", "Kwisi honesty!"},
-            {"A battle you're still fighting", "QUESTION", "Ephesians 6:10 - Be strong in the Lord", "Kwisi strength!"},
-            {"A way you've had to redefine success for yourself", "QUESTION", "1 Timothy 6:6 - Godliness with contentment is gain", "Kwisi perspective!"},
+            // Places
+            {"A beach", "QUESTION", "Kwisi place!", "Kwisi guess!"},
+            {"A school", "QUESTION", "Kwisi place!", "Kwisi guess!"},
+            {"A church", "QUESTION", "Kwisi place!", "Kwisi guess!"},
+            {"A park", "QUESTION", "Kwisi place!", "Kwisi guess!"},
+            {"A hospital", "QUESTION", "Kwisi place!", "Kwisi guess!"},
             
-            // Purpose & Direction
-            {"A dream that scares and excites you", "QUESTION", "Jeremiah 29:11 - I have plans for you, plans for good", "Kwisi vision!"},
-            {"Something you're working toward and why it matters", "QUESTION", "Proverbs 29:18 - Where there is no vision, the people perish", "Kwisi purpose!"},
-            {"A way you want to impact your community", "QUESTION", "Matthew 5:16 - Let your light shine", "Kwisi influence!"},
-            {"Something you haven't done yet but want to", "QUESTION", "Proverbs 20:4 - The sluggard craves but gets nothing", "Kwisi aspiration!"},
-            {"A version of yourself you're still becoming", "QUESTION", "2 Peter 3:18 - Grow in grace and knowledge", "Kwisi transformation!"},
+            // Verbs/Actions
+            {"Dancing", "QUESTION", "Kwisi action!", "Kwisi guess!"},
+            {"Sleeping", "QUESTION", "Kwisi action!", "Kwisi guess!"},
+            {"Eating", "QUESTION", "Kwisi action!", "Kwisi guess!"},
+            {"Running", "QUESTION", "Kwisi action!", "Kwisi guess!"},
+            {"Swimming", "QUESTION", "Kwisi action!", "Kwisi guess!"},
             
-            // Family & Home
-            {"What home means to you beyond just a place", "QUESTION", "John 14:1-3 - I go to prepare a place for you", "Kwisi belonging!"},
-            {"A family tradition that shaped you", "QUESTION", "Proverbs 22:6 - Train a child in the way they should go", "Kwisi roots!"},
-            {"Someone in your family who inspires you", "QUESTION", "Proverbs 27:12 - The wise see danger and take refuge", "Kwisi role model!"},
-            {"A sacrifice your family made for you", "QUESTION", "John 15:13 - Greater love has no one than this", "Kwisi appreciation!"},
-            {"Something you want to pass down to the next generation", "QUESTION", "Deuteronomy 6:6 - These commandments on your heart", "Kwisi legacy!"}
+            // Sports
+            {"Football", "QUESTION", "Kwisi sport!", "Kwisi guess!"},
+            {"Basketball", "QUESTION", "Kwisi sport!", "Kwisi guess!"},
+            {"Tennis", "QUESTION", "Kwisi sport!", "Kwisi guess!"},
+            {"Swimming", "QUESTION", "Kwisi sport!", "Kwisi guess!"},
+            {"Golf", "QUESTION", "Kwisi sport!", "Kwisi guess!"}
         };
 
         for (String[] data : questionData) {

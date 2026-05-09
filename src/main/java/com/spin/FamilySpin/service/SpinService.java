@@ -152,7 +152,21 @@ public class SpinService {
 
     public synchronized SpinState getState() {
         String friendOfTheWeek = getFriendOfTheWeek();
-        return new SpinState(sessionNumber, sessionStartedAt, sessionCompletedAt, activeMembers.isEmpty(), friendOfTheWeek, buildDashboardMessage(friendOfTheWeek, activeMembers.isEmpty()), List.copyOf(activeMembers), List.copyOf(history), getPlayersThisSession(), rosterMembers.size());
+        // Rebuild active members from database to ensure accuracy after any restarts or refreshes
+        List<String> currentActiveMembers = rebuildActiveMembers();
+        return new SpinState(sessionNumber, sessionStartedAt, sessionCompletedAt, currentActiveMembers.isEmpty(), friendOfTheWeek, buildDashboardMessage(friendOfTheWeek, currentActiveMembers.isEmpty()), currentActiveMembers, List.copyOf(history), getPlayersThisSession(), rosterMembers.size());
+    }
+    
+    private List<String> rebuildActiveMembers() {
+        // Get all eliminated members in current session from database
+        Set<String> eliminatedSet = gamePlayRepository.findBySessionNumber(sessionNumber).stream()
+                .map(GamePlay::getEliminatedMember)
+                .collect(java.util.stream.Collectors.toSet());
+        
+        // Active members = all roster members minus eliminated ones
+        return rosterMembers.stream()
+                .filter(member -> !containsMemberIgnoreCase(new ArrayList<>(eliminatedSet), member))
+                .toList();
     }
 
     public synchronized boolean hasUserSpunThisSession(User user) {

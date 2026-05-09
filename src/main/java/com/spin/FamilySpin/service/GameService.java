@@ -189,29 +189,22 @@ public class GameService {
         List<Game> oldGames = gameRepository.findByWeekNumber(weekNumber);
         gameRepository.deleteAll(oldGames);
 
-        // Create new games for each day
-        String[] gameNames = {
-            "Family Spin",           // Sunday (0)
-            "Trivia Challenge",      // Monday (1)
-            "Memory Match",          // Tuesday (2)
-            "Spin & Dare",          // Wednesday (3)
-            "Charades/Pictionary",   // Thursday (4)
-            "Word Association",      // Friday (5)
-            "20 Questions"           // Saturday (6)
+        // Keep only the simpler family-friendly game days:
+        // - Tuesday gets the old Monday game
+        // - Friday gets the old Tuesday game
+        // - Wednesday stays Wednesday
+        Object[][] gameSchedule = {
+            {"Trivia Challenge", 2, "TRIVIA"},
+            {"Memory Match", 5, "MEMORY"},
+            {"Spin & Dare", 3, "DARE"}
         };
 
-        String[] gameTypes = {
-            "SPIN",
-            "TRIVIA",
-            "MEMORY",
-            "DARE",
-            "CHARADES",
-            "WORD_ASSOCIATION",
-            "20_QUESTIONS"
-        };
+        for (Object[] entry : gameSchedule) {
+            String gameName = (String) entry[0];
+            int dayOfWeek = (Integer) entry[1];
+            String gameType = (String) entry[2];
 
-        for (int dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
-            Game game = new Game(gameNames[dayOfWeek], dayOfWeek, gameTypes[dayOfWeek], weekNumber, weekStartDate);
+            Game game = new Game(gameName, dayOfWeek, gameType, weekNumber, weekStartDate);
             gameRepository.save(game);
             
             // Generate content based on game type

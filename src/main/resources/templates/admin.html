@@ -195,6 +195,29 @@
             font-size: 12px;
         }
 
+        .toast {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            z-index: 1000;
+            min-width: 260px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #34d399;
+            box-shadow: 0 18px 40px rgba(16, 185, 129, 0.18);
+            display: none;
+            font-weight: 600;
+        }
+
+        .toast.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #f87171;
+            box-shadow: 0 18px 40px rgba(239, 68, 68, 0.14);
+        }
+
         @media (max-width: 768px) {
             .player-list { grid-template-columns: 1fr; }
             header { flex-direction: column; gap: 16px; align-items: flex-start; }
@@ -203,6 +226,7 @@
 </head>
 <body>
     <div class="shell">
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
         <header>
             <div>
                 <h1>👨‍💼 Admin Dashboard</h1>
@@ -353,12 +377,13 @@
             try{
                 const res = await fetch('/admin/reset', { method: 'POST' });
                 if (res.ok) {
+                    showToast('Session reset successfully.');
                     window.location.reload();
                 } else {
-                    alert('Failed to reset session');
+                    showToast('Failed to reset session', true);
                 }
             } catch(e){
-                alert('Failed to reset session: '+e.message);
+                showToast('Failed to reset session: ' + e.message, true);
             }
         }
         async function resetGames(){
@@ -366,14 +391,24 @@
             try{
                 const res = await fetch('/admin/reset-games', { method: 'POST' });
                 if (res.ok) {
-                    alert('✓ Games reset to 3-day schedule!');
+                    showToast('Games reset to 3-day schedule.');
                     window.location.reload();
                 } else {
-                    alert('Failed to reset games');
+                    showToast('Failed to reset games', true);
                 }
             } catch(e){
-                alert('Failed to reset games: '+e.message);
+                showToast('Failed to reset games: ' + e.message, true);
             }
+        }
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.toggle('error', isError);
+            toast.style.display = 'block';
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
         }
         function addMemberForm(e){
             e.preventDefault();

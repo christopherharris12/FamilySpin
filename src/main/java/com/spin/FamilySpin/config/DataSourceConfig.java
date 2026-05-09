@@ -131,17 +131,13 @@ public class DataSourceConfig {
                 password = userParts.length > 1 ? URLDecoder.decode(userParts[1], StandardCharsets.UTF_8) : "";
             }
 
-            // Build JDBC URL with embedded credentials
+            // Build JDBC URL WITHOUT embedded credentials - credentials go in setUsername/setPassword
             String port = uri.getPort() > 0 ? String.valueOf(uri.getPort()) : "5432";
-            StringBuilder jdbcUrl = new StringBuilder("jdbc:postgresql://");
-            if (!username.isEmpty()) {
-                jdbcUrl.append(username);
-                if (!password.isEmpty()) {
-                    jdbcUrl.append(":").append(password);
-                }
-                jdbcUrl.append("@");
-            }
-            jdbcUrl.append(uri.getHost()).append(":").append(port).append(uri.getPath());
+            StringBuilder jdbcUrl = new StringBuilder("jdbc:postgresql://")
+                    .append(uri.getHost())
+                    .append(":")
+                    .append(port)
+                    .append(uri.getPath());
 
             if (uri.getQuery() != null && !uri.getQuery().isBlank()) {
                 jdbcUrl.append('?').append(uri.getQuery());

@@ -8,6 +8,7 @@ import com.spin.FamilySpin.model.SpinSession;
 import com.spin.FamilySpin.model.SpinState;
 import com.spin.FamilySpin.model.User;
 import com.spin.FamilySpin.repository.DynamicMemberRepository;
+import com.spin.FamilySpin.repository.GameAnswerRepository;
 import com.spin.FamilySpin.repository.GamePlayRepository;
 import com.spin.FamilySpin.repository.GameRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,7 @@ public class SpinService {
     private final List<SpinHistoryEntry> history;
     private final java.util.Deque<String> recentLogins;
     private final GamePlayRepository gamePlayRepository;
+    private final GameAnswerRepository gameAnswerRepository;
     private final GameRepository gameRepository;
     private final DynamicMemberRepository dynamicMemberRepository;
     private final Set<Long> usersSpunThisSession;
@@ -38,11 +40,12 @@ public class SpinService {
     private Instant sessionStartedAt;
     private Instant sessionCompletedAt;
 
-    public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository, GameRepository gameRepository, DynamicMemberRepository dynamicMemberRepository) {
+    public SpinService(@Value("${family.spin.members}") String seedMembers, GamePlayRepository gamePlayRepository, GameAnswerRepository gameAnswerRepository, GameRepository gameRepository, DynamicMemberRepository dynamicMemberRepository) {
         this.originalMembers = parseMembers(seedMembers);
         this.rosterMembers = new ArrayList<>(originalMembers);
         this.dynamicMemberRepository = dynamicMemberRepository;
         this.gamePlayRepository = gamePlayRepository;
+        this.gameAnswerRepository = gameAnswerRepository;
         this.gameRepository = gameRepository;
         
         // Load dynamically added members from database
@@ -164,6 +167,8 @@ public class SpinService {
         activeMembers.addAll(rosterMembers);
         history.clear();
         usersSpunThisSession.clear();
+        gamePlayRepository.deleteAll();
+        gameAnswerRepository.deleteAll();
         sessionNumber++;
         sessionStartedAt = Instant.now();
         sessionCompletedAt = null;

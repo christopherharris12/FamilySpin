@@ -4,6 +4,7 @@ import com.spin.FamilySpin.model.GamePlay;
 import com.spin.FamilySpin.model.User;
 import com.spin.FamilySpin.repository.GamePlayRepository;
 import com.spin.FamilySpin.repository.UserRepository;
+import com.spin.FamilySpin.service.GameService;
 import com.spin.FamilySpin.service.SpinService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,12 +24,14 @@ public class AdminController {
     private final UserRepository userRepository;
     private final GamePlayRepository gamePlayRepository;
     private final SpinService spinService;
+    private final GameService gameService;
     private final com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository;
 
-    public AdminController(UserRepository userRepository, GamePlayRepository gamePlayRepository, SpinService spinService, com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository) {
+    public AdminController(UserRepository userRepository, GamePlayRepository gamePlayRepository, SpinService spinService, GameService gameService, com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository) {
         this.userRepository = userRepository;
         this.gamePlayRepository = gamePlayRepository;
         this.spinService = spinService;
+        this.gameService = gameService;
         this.gameAnswerRepository = gameAnswerRepository;
     }
 
@@ -128,7 +131,7 @@ public class AdminController {
             return "redirect:/dashboard";
         }
 
-        spinService.resetGames();
+        gameService.resetGamesForCurrentWeek();
         return "redirect:/dashboard";
     }
 

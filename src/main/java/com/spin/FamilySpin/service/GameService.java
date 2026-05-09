@@ -215,6 +215,22 @@ public class GameService {
         this.weekStartDate = weekStartDate;
     }
 
+    public synchronized void resetGamesForCurrentWeek() {
+        List<Game> currentGames = gameRepository.findByWeekNumber(currentWeekNumber);
+        for (Game game : currentGames) {
+            gameAnswerRepository.deleteAll(gameAnswerRepository.findAll().stream()
+                    .filter(answer -> answer.getGame() != null && answer.getGame().getId().equals(game.getId()))
+                    .toList());
+            gameScoreRepository.deleteAll(gameScoreRepository.findAll().stream()
+                    .filter(score -> score.getGame() != null && score.getGame().getId().equals(game.getId()))
+                    .toList());
+            gameQuestionRepository.deleteAll(gameQuestionRepository.findByGame(game));
+            gameChallengeRepository.deleteAll(gameChallengeRepository.findByGame(game));
+        }
+        gameRepository.deleteAll(currentGames);
+        initializeWeekGames(currentWeekNumber, weekStartDate);
+    }
+
     /**
      * Generate random content for each game type
      */

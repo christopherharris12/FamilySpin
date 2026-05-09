@@ -197,4 +197,21 @@ public class AdminController {
         spinService.removeMember(familyMemberName);
         return "redirect:/admin";
     }
+
+    @PostMapping("/set-admin-by-username")
+    public String setAdminByUsername(@org.springframework.web.bind.annotation.RequestParam String username) {
+        // Bootstrap endpoint - allow first admin setup
+        long adminCount = userRepository.findAll().stream().filter(User::isAdmin).count();
+        
+        // Only allow if there are no admins yet (bootstrap)
+        if (adminCount == 0) {
+            userRepository.findByUsername(username).ifPresent(u -> {
+                u.setAdmin(true);
+                userRepository.save(u);
+            });
+            return "redirect:/login";
+        }
+        
+        return "redirect:/login";
+    }
 }

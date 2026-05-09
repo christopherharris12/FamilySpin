@@ -103,6 +103,7 @@ public class AuthController {
 
         session.setAttribute("userId", user.getId());
         session.setAttribute("username", user.getUsername());
+        session.setAttribute("isAdmin", user.isAdmin());
         // Record login for admin dashboard notification
         spinService.recordLogin(user);
 

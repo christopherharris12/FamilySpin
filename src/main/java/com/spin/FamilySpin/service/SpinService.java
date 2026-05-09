@@ -44,7 +44,7 @@ public class SpinService {
         // Load dynamically added members from database
         List<DynamicMember> dynamicMembers = dynamicMemberRepository.findAll();
         for (DynamicMember dm : dynamicMembers) {
-            if (!rosterMembers.contains(dm.getName())) {
+            if (!containsMemberIgnoreCase(rosterMembers, dm.getName())) {
                 rosterMembers.add(dm.getName());
             }
         }
@@ -229,7 +229,7 @@ public class SpinService {
         }
 
         String trimmedName = familyMemberName.trim();
-        if (rosterMembers.contains(trimmedName)) {
+        if (containsMemberIgnoreCase(rosterMembers, trimmedName)) {
             return false;
         }
 
@@ -253,13 +253,11 @@ public class SpinService {
         }
 
         String trimmedName = familyMemberName.trim();
-        boolean removedFromRoster = rosterMembers.remove(trimmedName);
-        boolean removedFromActive = activeMembers.remove(trimmedName);
+        boolean removedFromRoster = removeMemberIgnoreCase(rosterMembers, trimmedName);
+        boolean removedFromActive = removeMemberIgnoreCase(activeMembers, trimmedName);
         
         // Delete from database
-        if (removedFromRoster || removedFromActive) {
-            dynamicMemberRepository.deleteByName(trimmedName);
-        }
+        dynamicMemberRepository.deleteByNameIgnoreCase(trimmedName);
         
         return removedFromRoster || removedFromActive;
     }
@@ -269,5 +267,13 @@ public class SpinService {
             return false;
         }
         return left.trim().equalsIgnoreCase(right.trim());
+    }
+
+    private boolean containsMemberIgnoreCase(List<String> members, String targetName) {
+        return members.stream().anyMatch(member -> isSameMemberName(member, targetName));
+    }
+
+    private boolean removeMemberIgnoreCase(List<String> members, String targetName) {
+        return members.removeIf(member -> isSameMemberName(member, targetName));
     }
 }

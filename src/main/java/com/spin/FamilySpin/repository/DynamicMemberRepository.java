@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface DynamicMemberRepository extends JpaRepository<DynamicMember, Long> {
     Optional<DynamicMember> findByName(String name);
-    void deleteByName(String name);
+    Optional<DynamicMember> findByNameIgnoreCase(String name);
+    void deleteByNameIgnoreCase(String name);
 }

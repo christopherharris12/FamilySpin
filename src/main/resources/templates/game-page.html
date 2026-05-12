@@ -425,6 +425,7 @@
                             📖 Bible Verse: [[${question.bibleVerse}]]
                         </div>
                         <input type="hidden" id="questionId" th:value="${question.id}" />
+                        <input type="hidden" id="correctAnswerValue" th:value="${question.answer}" />
                         <input type="text" class="answer-input" id="triviaAnswer" placeholder="Type your answer..." />
                     <div class="btn-group">
                         <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
@@ -596,13 +597,14 @@
             .then(data => {
                 resultEl = document.getElementById('answerResult');
                 if (!resultEl) return;
+                const fallbackCorrect = (document.getElementById('correctAnswerValue')?.value || '').trim();
 
                 if (data.correct) {
                     resultEl.className = 'status-message success';
                     resultEl.innerText = 'Correct! +20 points earned!';
                     resultEl.style.display = 'block';
                 } else {
-                    const correct = data.correctAnswer || 'Answer not available';
+                    const correct = (data.correctAnswer && String(data.correctAnswer).trim()) || fallbackCorrect || 'Answer not available';
                     if (!suppressAnswer) {
                         resultEl.className = 'status-message error';
                         resultEl.innerText = 'Incorrect. Correct answer: ' + correct;

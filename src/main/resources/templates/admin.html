@@ -352,6 +352,7 @@
                             <th style="padding:8px 6px; color:var(--muted);">Game</th>
                             <th style="padding:8px 6px; color:var(--muted);">User</th>
                             <th style="padding:8px 6px; color:var(--muted);">Question</th>
+                            <th style="padding:8px 6px; color:var(--muted);">Correct Answer</th>
                             <th style="padding:8px 6px; color:var(--muted);">Answer</th>
                             <th style="padding:8px 6px; color:var(--muted);">Attempt</th>
                         </tr>
@@ -362,6 +363,7 @@
                             <td style="padding:8px 6px; font-weight:600; color:#1f2937;" th:text="${ans.game.name}"></td>
                             <td style="padding:8px 6px;" th:text="${ans.user.familyMemberName}"></td>
                             <td style="padding:8px 6px; color:var(--muted); font-style:italic;" th:text="${ans.question != null ? ans.question.question : '-'}"></td>
+                            <td style="padding:8px 6px; color:#374151; font-style:italic;" th:text="${ans.question != null ? ans.question.answer : '-'}"></td>
                             <td style="padding:8px 6px; color:#374151;" th:text="${ans.answerText}"></td>
                             <td style="padding:8px 6px; color:var(--muted);" th:text="${ans.attemptNumber}"></td>
                         </tr>

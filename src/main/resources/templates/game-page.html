@@ -435,6 +435,8 @@
                         <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
                         <button class="btn-secondary" onclick="skipQuestion()">Skip</button>
                     </div>
+                    <!-- Inline correct/incorrect answer display -->
+                    <div id="answerResult" class="status-message" style="display:none; margin-top:12px;"></div>
                 </div>
                 <div th:if="!${question}" class="status-message error">
                     No questions available for today. Check back later!
@@ -567,6 +569,12 @@
                 timeLeft = 0;
                 renderTimer();
                 clearInterval(timerInterval);
+                // Auto-submit on timeout (do not suppress answer display)
+                try {
+                    recordAnswerToServer('[TIMEOUT]', 'Timeout', false);
+                } catch (e) {
+                    console.error('Auto-submit failed', e);
+                }
                 return;
             }
 
@@ -574,22 +582,44 @@
             renderTimer();
         }, 1000);
 
-        function recordAnswerToServer(answerText, gameType) {
+        function recordAnswerToServer(answerText, gameType, suppressAnswer = false) {
             // include questionId when available
             const qEl = document.getElementById('questionId');
             const qId = qEl ? qEl.value : '';
-            const url = `/api/games/${gameId}/answer?answerText=${encodeURIComponent(answerText)}${qId ? '&questionId=' + encodeURIComponent(qId) : ''}`;
-            fetch(url, {
-                method: 'POST'
-            })
+            const url = `/api/games/${gameId}/answer?answerText=${encodeURIComponent(answerText)}${qId ? '&questionId=' + encodeURIComponent(qId) : ''}` + (suppressAnswer ? '&suppress=true' : '');
+
+            // Prepare inline result element
+            let resultEl = document.getElementById('answerResult');
+            if (resultEl) {
+                resultEl.style.display = 'none';
+                resultEl.className = 'status-message';
+                resultEl.innerText = '';
+            }
+
+            fetch(url, { method: 'POST' })
             .then(response => response.json())
             .then(data => {
+                resultEl = document.getElementById('answerResult');
+                if (!resultEl) return;
+
                 if (data.correct) {
-                    alert('Correct! +' + (data.correct ? 20 : 0) + ' points earned!');
+                    resultEl.className = 'status-message success';
+                    resultEl.innerText = 'Correct! +20 points earned!';
+                    resultEl.style.display = 'block';
                 } else {
-                    // show correct answer immediately when user fails
                     const correct = data.correctAnswer || 'Answer not available';
-                    alert('Incorrect. Correct answer: ' + correct);
+                    if (!suppressAnswer) {
+                        resultEl.className = 'status-message error';
+                        resultEl.innerText = 'Incorrect. Correct answer: ' + correct;
+                        resultEl.style.display = 'block';
+                        if (window.speechSynthesis && correct && correct !== 'Answer not available') {
+                            speakText(correct);
+                        }
+                    } else {
+                        resultEl.className = 'status-message';
+                        resultEl.innerText = 'Skipped.';
+                        resultEl.style.display = 'block';
+                    }
                 }
 
                 if (data.remainingAttempts === 0) {
@@ -598,8 +628,27 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('⚠️ Error recording your answer. Please try again.');
+                const errEl = document.getElementById('answerResult');
+                if (errEl) {
+                    errEl.className = 'status-message error';
+                    errEl.innerText = '⚠️ Error recording your answer. Please try again.';
+                    errEl.style.display = 'block';
+                } else {
+                    alert('⚠️ Error recording your answer. Please try again.');
+                }
             });
+        }
+
+        function speakText(text) {
+            try {
+                if (!('speechSynthesis' in window)) return;
+                const utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'rw-RW';
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utter);
+            } catch (e) {
+                console.error('Speech synthesis failed', e);
+            }
         }
 
         // Voice recognition (Web Speech API)
@@ -646,7 +695,8 @@
         }
 
         function skipQuestion() {
-            recordAnswerToServer('[SKIPPED]', 'Question');
+            // Skip but do not reveal the correct answer
+            recordAnswerToServer('[SKIPPED]', 'Question', true);
         }
 
         function completeDare() {
@@ -654,7 +704,7 @@
         }
 
         function skipDare() {
-            recordAnswerToServer('[SKIPPED]', 'Dare');
+            recordAnswerToServer('[SKIPPED]', 'Dare', true);
         }
 
         function completeCharades() {
@@ -662,7 +712,7 @@
         }
 
         function skipCharades() {
-            recordAnswerToServer('[SKIPPED]', 'Charades');
+            recordAnswerToServer('[SKIPPED]', 'Charades', true);
         }
 
         function addWord() {

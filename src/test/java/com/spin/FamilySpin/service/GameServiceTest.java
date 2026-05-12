@@ -53,7 +53,7 @@ class GameServiceTest {
     }
 
     @Test
-    @DisplayName("Should return remaining attempts as 1 when user has not answered today")
+    @DisplayName("Should return 5 remaining trivia attempts when user has not answered today")
     void testGetRemainingAttemptsWhenNoAnswerToday() {
         // Arrange
         User user = createTestUser(1L, "testUser");
@@ -66,11 +66,11 @@ class GameServiceTest {
         int remainingAttempts = gameService.getRemainingAttempts(user, game);
         
         // Assert
-        assertEquals(1, remainingAttempts, "Should have 1 remaining attempt when no answers recorded");
+        assertEquals(5, remainingAttempts, "Should have 5 remaining attempts when no answers recorded");
     }
 
     @Test
-    @DisplayName("Should return 0 remaining attempts when user has already answered once today")
+    @DisplayName("Should return 4 remaining trivia attempts when user has answered once today")
     void testGetRemainingAttemptsWhenAlreadyAnswered() {
         // Arrange
         User user = createTestUser(1L, "testUser");
@@ -83,7 +83,7 @@ class GameServiceTest {
         int remainingAttempts = gameService.getRemainingAttempts(user, game);
         
         // Assert
-        assertEquals(0, remainingAttempts, "Should have 0 remaining attempts after one answer");
+        assertEquals(4, remainingAttempts, "Should have 4 remaining attempts after one answer");
     }
 
     @Test

@@ -145,6 +145,38 @@
             border-left: 4px solid var(--primary);
         }
 
+        .trivia-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 22px 0 24px;
+        }
+
+        .trivia-option {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+            color: var(--text);
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .trivia-option:hover {
+            transform: translateY(-1px);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 65, 12, 0.08);
+        }
+
+        .trivia-option.selected {
+            background: rgba(194, 65, 12, 0.08);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
         .answer-input {
             width: 100%;
             padding: 15px;
@@ -427,14 +459,14 @@
                         <input type="hidden" id="questionId" th:value="${question.id}" />
                         <input type="hidden" id="correctAnswerValue" th:value="${question.answer}" />
                         <div style="margin: 30px 0;">
-                            <label for="answerSelect" style="display: block; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Choose the correct answer:</label>
-                            <select class="answer-input" id="answerSelect" style="padding: 12px; font-size: 15px; background: white;">
-                                <option value="">-- Select an answer --</option>
-                                <option th:value="${question.option1}" th:text="${question.option1}"></option>
-                                <option th:value="${question.option2}" th:text="${question.option2}"></option>
-                                <option th:value="${question.option3}" th:text="${question.option3}"></option>
-                                <option th:value="${question.option4}" th:text="${question.option4}"></option>
-                            </select>
+                            <label style="display: block; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Choose the correct answer:</label>
+                            <input type="hidden" id="selectedTriviaAnswer" value="" />
+                            <div class="trivia-options">
+                                <button type="button" class="trivia-option" th:text="${question.option1}" th:onclick="|selectTriviaOption('${question.option1}')|"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option2}" th:onclick="|selectTriviaOption('${question.option2}')|"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option3}" th:onclick="|selectTriviaOption('${question.option3}')|"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option4}" th:onclick="|selectTriviaOption('${question.option4}')|"></button>
+                            </div>
                         </div>
                     <div class="btn-group">
                         <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
@@ -645,25 +677,33 @@
             });
         }
 
+        function selectTriviaOption(answer) {
+            const selectedAnswer = document.getElementById('selectedTriviaAnswer');
+            const options = document.querySelectorAll('.trivia-option');
+            selectedAnswer.value = answer;
+            options.forEach(option => option.classList.remove('selected'));
+            const activeOption = Array.from(options).find(option => option.innerText.trim() === answer.trim());
+            if (activeOption) {
+                activeOption.classList.add('selected');
+            }
+        }
+
         function submitTrivia() {
-            const answerSelect = document.getElementById('answerSelect');
-            const answer = answerSelect.value;
+            const selectedAnswer = document.getElementById('selectedTriviaAnswer');
+            const answer = selectedAnswer.value;
             if (answer.trim()) {
-                // Disable select and buttons while submitting
-                answerSelect.disabled = true;
-                document.querySelector('button[onclick=\"submitTrivia()\"]').disabled = true;
+                document.querySelectorAll('.trivia-option').forEach(option => option.disabled = true);
+                document.querySelector('button[onclick="submitTrivia()"]').disabled = true;
                 recordAnswerToServer(answer, 'Trivia Answer', false, function() {
-                    // Show Next button after answer is revealed
                     document.getElementById('nextBtn').style.display = 'inline-block';
                 });
             } else {
-                alert('Please select an answer before submitting!');
+                alert('Please choose an answer before submitting!');
             }
         }
 
         function nextQuestion() {
-            // Reload the game page to get the next question
-            window.location.href = '/games';
+            window.location.href = '/games/' + gameId;
         }
 
         function skipQuestion() {

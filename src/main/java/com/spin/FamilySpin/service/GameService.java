@@ -117,6 +117,9 @@ public class GameService {
     public synchronized int getRemainingAttempts(User user, Game game) {
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
         long count = gameAnswerRepository.countByUserAndGameAndAnswerDate(user, game, today);
+        if (game != null && "TRIVIA".equalsIgnoreCase(game.getGameType())) {
+            return Math.max(5 - (int) count, 0);
+        }
         if (count >= 1) {
             return 0; // No more attempts
         }
@@ -167,7 +170,9 @@ public class GameService {
     }
 
     public synchronized Optional<GameQuestion> getRandomQuestion(Game game, User user) {
-        List<GameQuestion> questions = gameQuestionRepository.findByGame(game);
+        List<GameQuestion> questions = gameQuestionRepository.findByGame(game).stream()
+                .sorted(Comparator.comparing(GameQuestion::getId))
+                .toList();
         if (questions.isEmpty()) {
             return Optional.empty();
         }
@@ -177,12 +182,10 @@ public class GameService {
             return Optional.of(questions.get(randomIndex));
         }
 
-        int stableIndex = Math.floorMod(Objects.hash(
-                user.getId(),
-                user.getUsername(),
-                user.getFamilyMemberName(),
-                game.getId()), questions.size());
-        return Optional.of(questions.get(stableIndex));
+        LocalDate today = LocalDate.now(ZoneId.systemDefault());
+        long answeredCount = gameAnswerRepository.countByUserAndGameAndAnswerDate(user, game, today);
+        int nextIndex = (int) Math.min(answeredCount, questions.size() - 1L);
+        return Optional.of(questions.get(nextIndex));
     }
 
     /**

@@ -401,11 +401,10 @@
         <!-- ATTEMPTS NOTIFICATION -->
         <div th:if="${playable}" style="margin-bottom: 20px;">
             <div th:if="${remainingAttempts > 0}" style="background: #dbeafe; border-left: 4px solid #3b82f6; padding: 15px 20px; border-radius: 8px; color: #1e40af; font-weight: 600;">
-                📝 <span th:if="${remainingAttempts == 2}">You have 2 attempts available today</span>
-                <span th:if="${remainingAttempts == 1}">⚠️ LAST ATTEMPT! After this, you cannot answer this game today</span>
+                📝 <span th:if="${remainingAttempts == 1}">You have 1 attempt available today</span>
             </div>
             <div th:if="${remainingAttempts == 0}" style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 20px; border-radius: 8px; color: #991b1b; font-weight: 600; text-align: center; font-size: 16px;">
-                🚫 You have already used both attempts for today's game. Come back tomorrow to play again!
+                🚫 You have already used your one attempt for today's game. Come back tomorrow to play again!
             </div>
         </div>
 
@@ -536,7 +535,7 @@
             <div style="text-align: center; padding: 60px 40px; background: #fee2e2; border-radius: 15px;">
                 <div style="font-size: 80px; margin-bottom: 20px;">🚫</div>
                 <h2 style="color: #991b1b; margin-bottom: 15px;">Game Attempts Exhausted</h2>
-                <p style="color: #7f1d1d; font-size: 18px; margin-bottom: 10px;">You have used both of your 2 allowed attempts for today's game.</p>
+                <p style="color: #7f1d1d; font-size: 18px; margin-bottom: 10px;">You have used your one allowed attempt for today's game.</p>
                 <p style="color: #7f1d1d; font-size: 16px; margin-bottom: 30px;">Come back tomorrow to play again!</p>
                 <button class="back-btn" onclick="window.location.href='/games'" style="background: var(--primary); font-size: 16px; padding: 12px 30px;">← Back to Games Hub</button>
             </div>

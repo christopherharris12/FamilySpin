@@ -112,15 +112,15 @@ public class GameService {
 
     /**
      * Check if user has remaining attempts on today's game
-     * Returns: 2 = can still play, 1 = last attempt, 0 = no more attempts
+     * Returns: 1 = can still play, 0 = no more attempts
      */
     public synchronized int getRemainingAttempts(User user, Game game) {
         LocalDate today = LocalDate.now(ZoneId.systemDefault());
         long count = gameAnswerRepository.countByUserAndGameAndAnswerDate(user, game, today);
-        if (count >= 2) {
+        if (count >= 1) {
             return 0; // No more attempts
         }
-        return (int)(2 - count); // Return remaining attempts
+        return (int)(1 - count); // Return remaining attempts
     }
 
     /**

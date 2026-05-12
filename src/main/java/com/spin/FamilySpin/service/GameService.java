@@ -158,15 +158,31 @@ public class GameService {
     }
 
     /**
-     * Get random trivia question for today's game
+     * Get a trivia question for today's game.
+     * If a user is provided, the selection is stable per user so each person
+     * gets a consistent question from the same weekly pool.
      */
     public synchronized Optional<GameQuestion> getRandomQuestion(Game game) {
+        return getRandomQuestion(game, null);
+    }
+
+    public synchronized Optional<GameQuestion> getRandomQuestion(Game game, User user) {
         List<GameQuestion> questions = gameQuestionRepository.findByGame(game);
         if (questions.isEmpty()) {
             return Optional.empty();
         }
-        int randomIndex = ThreadLocalRandom.current().nextInt(questions.size());
-        return Optional.of(questions.get(randomIndex));
+
+        if (user == null) {
+            int randomIndex = ThreadLocalRandom.current().nextInt(questions.size());
+            return Optional.of(questions.get(randomIndex));
+        }
+
+        int stableIndex = Math.floorMod(Objects.hash(
+                user.getId(),
+                user.getUsername(),
+                user.getFamilyMemberName(),
+                game.getId()), questions.size());
+        return Optional.of(questions.get(stableIndex));
     }
 
     /**
@@ -256,7 +272,6 @@ public class GameService {
     }
 
     private void generateTriviaQuestions(Game game) {
-        // Select only 5 questions from the full pool (shuffled)
         String[][] allBibleVerses = {
             {"Kuko Imana yakunze isi cyane, yatanze Umwana wayo umwe, ngo umwizera wese atarimbuka ahubwo ahabwe ubugingo buhoraho.", "Yohana 3:16"},
             {"Uwiteka ni we mufasha wanjye; sinzagira icyo ntinya.", "Zaburi 23:1"},
@@ -280,42 +295,65 @@ public class GameService {
             {"Mwishimire Uwiteka, kuko ari we Mana y'ubuntu.", "Zaburi 100:2"}
         };
 
-        // Shuffle and select 5 questions
-        List<String[]> shuffled = new java.util.ArrayList<>(java.util.Arrays.asList(allBibleVerses));
-        java.util.Collections.shuffle(shuffled);
-        
-        for (int i = 0; i < 5 && i < shuffled.size(); i++) {
-            String[] data = shuffled.get(i);
-            String questionText = data[0];
-            String correctAnswer = data[1];
-            
-            // Generate 3 random incorrect answers from other verses
-            List<String> incorrectAnswers = new java.util.ArrayList<>();
-            for (int j = 0; j < shuffled.size(); j++) {
-                if (j != i && incorrectAnswers.size() < 3) {
-                    String[] otherData = shuffled.get(j);
-                    String otherAnswer = otherData[1];
-                    if (!otherAnswer.equals(correctAnswer) && !incorrectAnswers.contains(otherAnswer)) {
-                        incorrectAnswers.add(otherAnswer);
+        String[] questionTemplates = {
+            "Which verse matches this line: \"%s\"?",
+            "What is the reference for: \"%s\"?",
+            "Choose the Bible verse reference for this statement: \"%s\".",
+            "Which scripture goes with: \"%s\"?",
+            "Select the verse reference for: \"%s\".",
+            "What verse is this from: \"%s\"?",
+            "Find the matching Bible verse for: \"%s\".",
+            "Which reference belongs to: \"%s\"?",
+            "Bible trivia: what reference matches \"%s\"?",
+            "Complete the verse reference for: \"%s\"."
+        };
+
+        // Build 200 trivia questions by combining the verse pool with 10 prompt styles.
+        // This keeps the game fresh while still drawing from familiar Bible content.
+        List<String[]> versePool = new ArrayList<>(Arrays.asList(allBibleVerses));
+        Collections.shuffle(versePool);
+
+        int questionCount = 0;
+        for (int templateIndex = 0; templateIndex < questionTemplates.length && questionCount < 200; templateIndex++) {
+            for (int verseIndex = 0; verseIndex < versePool.size() && questionCount < 200; verseIndex++) {
+                String[] verse = versePool.get(verseIndex);
+                String questionText = String.format(questionTemplates[templateIndex], verse[0]);
+                String correctAnswer = verse[1];
+
+                List<String> incorrectAnswers = new ArrayList<>();
+                for (String[] candidate : versePool) {
+                    String candidateAnswer = candidate[1];
+                    if (!candidateAnswer.equals(correctAnswer) && !incorrectAnswers.contains(candidateAnswer)) {
+                        incorrectAnswers.add(candidateAnswer);
+                    }
+                    if (incorrectAnswers.size() == 3) {
+                        break;
                     }
                 }
+
+                while (incorrectAnswers.size() < 3) {
+                    incorrectAnswers.add("Zaburi " + (100 + incorrectAnswers.size()) + ":" + (incorrectAnswers.size() + 1));
+                }
+
+                List<String> options = new ArrayList<>();
+                options.add(correctAnswer);
+                options.addAll(incorrectAnswers);
+                Collections.shuffle(options);
+
+                GameQuestion question = new GameQuestion(
+                        game,
+                        questionText,
+                        correctAnswer,
+                        "Biblical",
+                        "Kwisi verse",
+                        options.get(0),
+                        options.get(1),
+                        options.get(2),
+                        options.get(3)
+                );
+                gameQuestionRepository.save(question);
+                questionCount++;
             }
-            
-            // If we don't have enough incorrect answers, add generic ones
-            while (incorrectAnswers.size() < 3) {
-                incorrectAnswers.add("Zaburi " + (100 + incorrectAnswers.size()) + ":" + (incorrectAnswers.size() + 1));
-            }
-            
-            // Create options list and shuffle
-            List<String> options = new java.util.ArrayList<>();
-            options.add(correctAnswer);
-            options.addAll(incorrectAnswers);
-            java.util.Collections.shuffle(options);
-            
-            // Create question with multiple choice options
-            GameQuestion q = new GameQuestion(game, questionText, correctAnswer, "Biblical", "Kwisi verse",
-                    options.get(0), options.get(1), options.get(2), options.get(3));
-            gameQuestionRepository.save(q);
         }
     }
 

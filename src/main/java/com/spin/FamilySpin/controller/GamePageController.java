@@ -87,7 +87,7 @@ public class GamePageController {
         }
 
         if (game.getGameType().equals("TRIVIA")) {
-            Optional<GameQuestion> question = gameService.getRandomQuestion(game);
+            Optional<GameQuestion> question = gameService.getRandomQuestion(game, user);
             model.addAttribute("question", question.orElse(null));
         }
 

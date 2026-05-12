@@ -462,10 +462,10 @@
                             <label style="display: block; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Choose the correct answer:</label>
                             <input type="hidden" id="selectedTriviaAnswer" value="" />
                             <div class="trivia-options">
-                                <button type="button" class="trivia-option" th:text="${question.option1}" th:onclick="|selectTriviaOption('${question.option1}')|"></button>
-                                <button type="button" class="trivia-option" th:text="${question.option2}" th:onclick="|selectTriviaOption('${question.option2}')|"></button>
-                                <button type="button" class="trivia-option" th:text="${question.option3}" th:onclick="|selectTriviaOption('${question.option3}')|"></button>
-                                <button type="button" class="trivia-option" th:text="${question.option4}" th:onclick="|selectTriviaOption('${question.option4}')|"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option1}" th:data-value="${question.option1}" onclick="selectTriviaOption(this)"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option2}" th:data-value="${question.option2}" onclick="selectTriviaOption(this)"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option3}" th:data-value="${question.option3}" onclick="selectTriviaOption(this)"></button>
+                                <button type="button" class="trivia-option" th:text="${question.option4}" th:data-value="${question.option4}" onclick="selectTriviaOption(this)"></button>
                             </div>
                         </div>
                     <div class="btn-group">
@@ -677,15 +677,13 @@
             });
         }
 
-        function selectTriviaOption(answer) {
+        function selectTriviaOption(buttonElement) {
             const selectedAnswer = document.getElementById('selectedTriviaAnswer');
             const options = document.querySelectorAll('.trivia-option');
+            const answer = buttonElement.getAttribute('data-value');
             selectedAnswer.value = answer;
             options.forEach(option => option.classList.remove('selected'));
-            const activeOption = Array.from(options).find(option => option.innerText.trim() === answer.trim());
-            if (activeOption) {
-                activeOption.classList.add('selected');
-            }
+            buttonElement.classList.add('selected');
         }
 
         function submitTrivia() {
@@ -703,7 +701,7 @@
         }
 
         function nextQuestion() {
-            window.location.href = '/games/' + gameId;
+            window.location.reload();
         }
 
         function skipQuestion() {

@@ -427,10 +427,6 @@
                         </div>
                         <input type="hidden" id="questionId" th:value="${question.id}" />
                         <input type="text" class="answer-input" id="triviaAnswer" placeholder="Type your answer..." />
-                        <div style="margin-top:8px">
-                            <button id="voiceBtn" class="btn-secondary" onclick="startVoice()">🎤 Record Answer</button>
-                            <span id="voiceStatus" style="margin-left:10px;color:#1f2937;font-weight:600;"></span>
-                        </div>
                     <div class="btn-group">
                         <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
                         <button class="btn-secondary" onclick="skipQuestion()">Skip</button>
@@ -612,9 +608,6 @@
                         resultEl.className = 'status-message error';
                         resultEl.innerText = 'Incorrect. Correct answer: ' + correct;
                         resultEl.style.display = 'block';
-                        if (window.speechSynthesis && correct && correct !== 'Answer not available') {
-                            speakText(correct);
-                        }
                     } else {
                         resultEl.className = 'status-message';
                         resultEl.innerText = 'Skipped.';
@@ -637,52 +630,6 @@
                     alert('⚠️ Error recording your answer. Please try again.');
                 }
             });
-        }
-
-        function speakText(text) {
-            try {
-                if (!('speechSynthesis' in window)) return;
-                const utter = new SpeechSynthesisUtterance(text);
-                utter.lang = 'rw-RW';
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(utter);
-            } catch (e) {
-                console.error('Speech synthesis failed', e);
-            }
-        }
-
-        // Voice recognition (Web Speech API)
-        let recognition;
-        function startVoice() {
-            const status = document.getElementById('voiceStatus');
-            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-                alert('Speech recognition not supported in this browser. Use Chrome desktop for best results.');
-                return;
-            }
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'rw-RW';
-            recognition.interimResults = false;
-            recognition.maxAlternatives = 1;
-            status.innerText = 'Listening...';
-            recognition.start();
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('triviaAnswer').value = transcript;
-                status.innerText = 'Captured: ' + transcript;
-                // auto-submit
-                recordAnswerToServer(transcript, 'Voice Answer');
-            };
-
-            recognition.onerror = (e) => {
-                console.error('Speech error', e);
-                status.innerText = 'Error capturing voice';
-            };
-
-            recognition.onend = () => {
-                status.innerText = '';
-            };
         }
 
         function submitTrivia() {

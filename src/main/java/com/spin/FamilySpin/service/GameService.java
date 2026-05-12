@@ -256,32 +256,65 @@ public class GameService {
     }
 
     private void generateTriviaQuestions(Game game) {
-        String[][] triviaData = {
-            // Kinyarwanda short verses and their locations (book chapter:verse)
-            {"Kuko Imana yakunze isi cyane, yatanze Umwana wayo umwe, ngo umwizera wese atarimbuka ahubwo ahabwe ubugingo buhoraho.", "Yohana 3:16", "Biblical", "Kwisi verse"},
-            {"Uwiteka ni we mufasha wanjye; sinzagira icyo ntinya.", "Zaburi 23:1", "Biblical", "Kwisi verse"},
-            {"Nshobora byose mubimufasha.", "Aba-Filipi 4:13", "Biblical", "Kwisi verse"},
-            {"Muri byose Imana ikorera neza abamukunda.", "Abaroma 8:28", "Biblical", "Kwisi verse"},
-            {"Wizere Uwiteka n'umutima wawe wose, ntukishingikirize ku bwenge bwawe.", "Imigani 3:5", "Biblical", "Kwisi verse"},
-            {"Shaka ubwami bw'Imana n'ubugwaneza bwayo, ibindi byose bizongerwaho.", "Matayo 6:33", "Biblical", "Kwisi verse"},
-            {"Mfite imigambi myiza kuri mwe, si migambi y'ihirima", "Yeremiya 29:11", "Biblical", "Kwisi verse"},
-            {"Ukwishima kw'Umwami niwo ngabo yanjye.", "Zaburi 118:24", "Biblical", "Kwisi verse"},
-            {"Humura, nzaba kumwe nawe; uceceke, menya ko ndi Imana.", "Zaburi 46:10", "Biblical", "Kwisi verse"},
-            {"Abashaka Uwiteka bazahabwa imbaraga nk'iy'igishoro cy'ikibunga.", "Yesaya 40:31", "Biblical", "Kwisi verse"},
-            {"Umusaruro w'Umwuka ni urukundo, ibyishimo, amahoro...", "Abagalatiya 5:22", "Biblical", "Kwisi verse"},
-            {"Urukundo rufite ubwihangane, bukagira neza; ntirwiyemera...", "1 Abakorinto 13:4", "Biblical", "Kwisi verse"},
-            {"Mwihangane kandi mwizere, Uwiteka ni we utanga imbabazi.", "Zaburi 86:5", "Biblical", "Kwisi verse"},
-            {"Ntukareke gukora ibyiza; kuko igihe cyo gusarura kizagera.", "Aba-Hebulayo 6:10", "Biblical", "Kwisi verse"},
-            {"Mugire ubuntu, muhe ibyo mukwiye abandi.", "Abaefeso 4:32", "Biblical", "Kwisi verse"},
-            {"Mwizerane mu byo mukora byose, mukurikize inzira y'ukuri.", "Imigani 4:25", "Biblical", "Kwisi verse"},
-            {"Ntimukirengagize gukunda mugenzi wanyu nk'uko mwikunda.", "Matayo 22:39", "Biblical", "Kwisi verse"},
-            {"Ntimugire ubwoba; kuko ndi kumwe namwe.", "Yoshua 1:9", "Biblical", "Kwisi verse"},
-            {"Mubabarirane uko Imana yabababarije muri Kristo.", "Abakolosayi 3:13", "Biblical", "Kwisi verse"},
-            {"Mwishimire Uwiteka, kuko ari we Mana y'ubuntu.", "Zaburi 100:2", "Biblical", "Kwisi verse"}
+        // Select only 5 questions from the full pool (shuffled)
+        String[][] allBibleVerses = {
+            {"Kuko Imana yakunze isi cyane, yatanze Umwana wayo umwe, ngo umwizera wese atarimbuka ahubwo ahabwe ubugingo buhoraho.", "Yohana 3:16"},
+            {"Uwiteka ni we mufasha wanjye; sinzagira icyo ntinya.", "Zaburi 23:1"},
+            {"Nshobora byose mubimufasha.", "Aba-Filipi 4:13"},
+            {"Muri byose Imana ikorera neza abamukunda.", "Abaroma 8:28"},
+            {"Wizere Uwiteka n'umutima wawe wose, ntukishingikirize ku bwenge bwawe.", "Imigani 3:5"},
+            {"Shaka ubwami bw'Imana n'ubugwaneza bwayo, ibindi byose bizongerwaho.", "Matayo 6:33"},
+            {"Mfite imigambi myiza kuri mwe, si migambi y'ihirima", "Yeremiya 29:11"},
+            {"Ukwishima kw'Umwami niwo ngabo yanjye.", "Zaburi 118:24"},
+            {"Humura, nzaba kumwe nawe; uceceke, menya ko ndi Imana.", "Zaburi 46:10"},
+            {"Abashaka Uwiteka bazahabwa imbaraga nk'iy'igishoro cy'ikibunga.", "Yesaya 40:31"},
+            {"Umusaruro w'Umwuka ni urukundo, ibyishimo, amahoro...", "Abagalatiya 5:22"},
+            {"Urukundo rufite ubwihangane, bukagira neza; ntirwiyemera...", "1 Abakorinto 13:4"},
+            {"Mwihangane kandi mwizere, Uwiteka ni we utanga imbabazi.", "Zaburi 86:5"},
+            {"Ntukareke gukora ibyiza; kuko igihe cyo gusarura kizagera.", "Aba-Hebulayo 6:10"},
+            {"Mugire ubuntu, muhe ibyo mukwiye abandi.", "Abaefeso 4:32"},
+            {"Mwizerane mu byo mukora byose, mukurikize inzira y'ukuri.", "Imigani 4:25"},
+            {"Ntimukirengagize gukunda mugenzi wanyu nk'uko mwikunda.", "Matayo 22:39"},
+            {"Ntimugire ubwoba; kuko ndi kumwe namwe.", "Yoshua 1:9"},
+            {"Mubabarirane uko Imana yabababarije muri Kristo.", "Abakolosayi 3:13"},
+            {"Mwishimire Uwiteka, kuko ari we Mana y'ubuntu.", "Zaburi 100:2"}
         };
 
-        for (String[] data : triviaData) {
-            GameQuestion q = new GameQuestion(game, data[0], data[1], data[2], data[3]);
+        // Shuffle and select 5 questions
+        List<String[]> shuffled = new java.util.ArrayList<>(java.util.Arrays.asList(allBibleVerses));
+        java.util.Collections.shuffle(shuffled);
+        
+        for (int i = 0; i < 5 && i < shuffled.size(); i++) {
+            String[] data = shuffled.get(i);
+            String questionText = data[0];
+            String correctAnswer = data[1];
+            
+            // Generate 3 random incorrect answers from other verses
+            List<String> incorrectAnswers = new java.util.ArrayList<>();
+            for (int j = 0; j < shuffled.size(); j++) {
+                if (j != i && incorrectAnswers.size() < 3) {
+                    String[] otherData = shuffled.get(j);
+                    String otherAnswer = otherData[1];
+                    if (!otherAnswer.equals(correctAnswer) && !incorrectAnswers.contains(otherAnswer)) {
+                        incorrectAnswers.add(otherAnswer);
+                    }
+                }
+            }
+            
+            // If we don't have enough incorrect answers, add generic ones
+            while (incorrectAnswers.size() < 3) {
+                incorrectAnswers.add("Zaburi " + (100 + incorrectAnswers.size()) + ":" + (incorrectAnswers.size() + 1));
+            }
+            
+            // Create options list and shuffle
+            List<String> options = new java.util.ArrayList<>();
+            options.add(correctAnswer);
+            options.addAll(incorrectAnswers);
+            java.util.Collections.shuffle(options);
+            
+            // Create question with multiple choice options
+            GameQuestion q = new GameQuestion(game, questionText, correctAnswer, "Biblical", "Kwisi verse",
+                    options.get(0), options.get(1), options.get(2), options.get(3));
             gameQuestionRepository.save(q);
         }
     }

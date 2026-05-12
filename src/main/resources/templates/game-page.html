@@ -426,9 +426,19 @@
                         </div>
                         <input type="hidden" id="questionId" th:value="${question.id}" />
                         <input type="hidden" id="correctAnswerValue" th:value="${question.answer}" />
-                        <input type="text" class="answer-input" id="triviaAnswer" placeholder="Type your answer..." />
+                        <div style="margin: 30px 0;">
+                            <label for="answerSelect" style="display: block; margin-bottom: 15px; font-size: 16px; font-weight: 600;">Choose the correct answer:</label>
+                            <select class="answer-input" id="answerSelect" style="padding: 12px; font-size: 15px; background: white;">
+                                <option value="">-- Select an answer --</option>
+                                <option th:value="${question.option1}" th:text="${question.option1}"></option>
+                                <option th:value="${question.option2}" th:text="${question.option2}"></option>
+                                <option th:value="${question.option3}" th:text="${question.option3}"></option>
+                                <option th:value="${question.option4}" th:text="${question.option4}"></option>
+                            </select>
+                        </div>
                     <div class="btn-group">
                         <button class="btn-primary" onclick="submitTrivia()">Submit Answer</button>
+                        <button class="btn-secondary" id="nextBtn" onclick="nextQuestion()" style="display:none;">Next Question</button>
                         <button class="btn-secondary" onclick="skipQuestion()">Skip</button>
                     </div>
                     <!-- Inline correct/incorrect answer display -->
@@ -544,8 +554,8 @@
     </div>
 
     <script th:inline="javascript">
-        // Timer countdown - 30 seconds per game, clamped at 00:00
-        let timeLeft = 30;
+        // Timer countdown - 180 seconds (3 minutes) for all 5 trivia questions, clamped at 00:00
+        let timeLeft = 180;
         let gameId = [[${game.id}]];
         const timerEl = document.getElementById('timer');
 
@@ -555,7 +565,7 @@
             const secs = safeTime % 60;
             timerEl.innerText = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
 
-            if (safeTime <= 30) {
+            if (safeTime <= 60) {
                 timerEl.classList.add('warning');
             }
         }
@@ -578,7 +588,7 @@
             renderTimer();
         }, 1000);
 
-        function recordAnswerToServer(answerText, gameType, suppressAnswer = false) {
+        function recordAnswerToServer(answerText, gameType, suppressAnswer = false, onComplete = null) {
             // include questionId when available
             const qEl = document.getElementById('questionId');
             const qId = qEl ? qEl.value : '';
@@ -615,6 +625,11 @@
                         resultEl.style.display = 'block';
                     }
                 }
+                
+                // Call onComplete callback if provided
+                if (onComplete && typeof onComplete === 'function') {
+                    onComplete();
+                }
 
             })
             .catch(error => {
@@ -631,12 +646,24 @@
         }
 
         function submitTrivia() {
-            const answer = document.getElementById('triviaAnswer').value;
+            const answerSelect = document.getElementById('answerSelect');
+            const answer = answerSelect.value;
             if (answer.trim()) {
-                recordAnswerToServer(answer, 'Trivia Answer');
+                // Disable select and buttons while submitting
+                answerSelect.disabled = true;
+                document.querySelector('button[onclick=\"submitTrivia()\"]').disabled = true;
+                recordAnswerToServer(answer, 'Trivia Answer', false, function() {
+                    // Show Next button after answer is revealed
+                    document.getElementById('nextBtn').style.display = 'inline-block';
+                });
             } else {
-                alert('Please type an answer before submitting!');
+                alert('Please select an answer before submitting!');
             }
+        }
+
+        function nextQuestion() {
+            // Reload the game page to get the next question
+            window.location.href = '/games';
         }
 
         function skipQuestion() {

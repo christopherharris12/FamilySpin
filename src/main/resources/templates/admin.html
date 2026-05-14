@@ -236,6 +236,7 @@
                 <button class="back-btn" onclick="window.location.href='/dashboard'">← Back to Game</button>
                 <button class="back-btn" id="resetBtn" style="background:#fde68a; border:1px solid #f59e0b;" onclick="resetSession()">Reset Session</button>
                 <button class="back-btn" id="resetGamesBtn" style="background:#fbbf24; border:1px solid #d97706;" onclick="resetGames()">🔄 Reset Games (3-day)</button>
+                <button class="back-btn" id="resetAppBtn" style="background:#fecaca; border:1px solid #ef4444; color:#991b1b;" onclick="resetApp()">⚠ Reset Whole App</button>
                 <button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </header>
@@ -400,6 +401,23 @@
                 }
             } catch(e){
                 showToast('Failed to reset games: ' + e.message, true);
+            }
+        }
+        async function resetApp(){
+            if (!confirm('Reset the entire app? This will delete all users, scores, answers, spins, and generated game data, then recreate the default admin account.')) return;
+            try{
+                const res = await fetch('/admin/reset-app', { method: 'POST' });
+                if (res.redirected) {
+                    window.location.href = res.url;
+                    return;
+                }
+                if (res.ok) {
+                    window.location.href = '/login?reset=success';
+                } else {
+                    showToast('Failed to reset the app', true);
+                }
+            } catch(e){
+                showToast('Failed to reset the app: ' + e.message, true);
             }
         }
         function showToast(message, isError = false) {

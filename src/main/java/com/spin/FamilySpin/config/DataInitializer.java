@@ -16,7 +16,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Create admin user if it doesn't exist
+        ensureBootstrapAdmin();
+    }
+
+    public void ensureBootstrapAdmin() {
         if (userRepository.findByUsername("Daddy Chriss").isEmpty()) {
             User adminUser = new User("Daddy Chriss", "admin@ebenezer.com", "anysie123", "Daddy Chriss");
             adminUser.setAdmin(true);

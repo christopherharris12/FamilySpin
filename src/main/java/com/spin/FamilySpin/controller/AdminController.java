@@ -1,8 +1,14 @@
 package com.spin.FamilySpin.controller;
 
+import com.spin.FamilySpin.config.DataInitializer;
 import com.spin.FamilySpin.model.GamePlay;
 import com.spin.FamilySpin.model.User;
+import com.spin.FamilySpin.repository.DynamicMemberRepository;
+import com.spin.FamilySpin.repository.GameAnswerRepository;
+import com.spin.FamilySpin.repository.GameChallengeRepository;
+import com.spin.FamilySpin.repository.GameQuestionRepository;
 import com.spin.FamilySpin.repository.GamePlayRepository;
+import com.spin.FamilySpin.repository.GameScoreRepository;
 import com.spin.FamilySpin.repository.UserRepository;
 import com.spin.FamilySpin.service.GameService;
 import com.spin.FamilySpin.service.SpinService;
@@ -11,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +32,24 @@ public class AdminController {
     private final GamePlayRepository gamePlayRepository;
     private final SpinService spinService;
     private final GameService gameService;
-    private final com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository;
+    private final GameAnswerRepository gameAnswerRepository;
+    private final GameScoreRepository gameScoreRepository;
+    private final GameQuestionRepository gameQuestionRepository;
+    private final GameChallengeRepository gameChallengeRepository;
+    private final DynamicMemberRepository dynamicMemberRepository;
+    private final DataInitializer dataInitializer;
 
-    public AdminController(UserRepository userRepository, GamePlayRepository gamePlayRepository, SpinService spinService, GameService gameService, com.spin.FamilySpin.repository.GameAnswerRepository gameAnswerRepository) {
+    public AdminController(UserRepository userRepository, GamePlayRepository gamePlayRepository, SpinService spinService, GameService gameService, GameAnswerRepository gameAnswerRepository, GameScoreRepository gameScoreRepository, GameQuestionRepository gameQuestionRepository, GameChallengeRepository gameChallengeRepository, DynamicMemberRepository dynamicMemberRepository, DataInitializer dataInitializer) {
         this.userRepository = userRepository;
         this.gamePlayRepository = gamePlayRepository;
         this.spinService = spinService;
         this.gameService = gameService;
         this.gameAnswerRepository = gameAnswerRepository;
+        this.gameScoreRepository = gameScoreRepository;
+        this.gameQuestionRepository = gameQuestionRepository;
+        this.gameChallengeRepository = gameChallengeRepository;
+        this.dynamicMemberRepository = dynamicMemberRepository;
+        this.dataInitializer = dataInitializer;
     }
 
     @GetMapping
@@ -133,6 +150,31 @@ public class AdminController {
 
         gameService.resetGamesForCurrentWeek();
         return "redirect:/dashboard";
+    }
+
+    @PostMapping("/reset-app")
+    @Transactional
+    public String resetApp(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/login";
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null || !user.isAdmin()) {
+            return "redirect:/dashboard";
+        }
+
+        gameAnswerRepository.deleteAll();
+        gameScoreRepository.deleteAll();
+        gamePlayRepository.deleteAll();
+        gameQuestionRepository.deleteAll();
+        gameChallengeRepository.deleteAll();
+        gameService.resetGamesForCurrentWeek();
+        userRepository.deleteAll();
+        dynamicMemberRepository.deleteAll();
+        dataInitializer.ensureBootstrapAdmin();
+
+        session.invalidate();
+        return "redirect:/login?reset=success";
     }
 
     @PostMapping("/add-member")
